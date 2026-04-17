@@ -448,6 +448,7 @@ body {
 <script>
 let DATA = null;
 let state = { brand: null, camera: null, selectedLenses: [], accessories: {}, priceMode: 'agent' }; // agent | retail
+window._lastAgentName = localStorage.getItem('doris_agent_name') || '';
 
 async function loadData() {
   const resp = await fetch('products.json?t=' + Date.now());
@@ -656,7 +657,7 @@ function generateResult() {
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
           <label style="font-size:13px;font-weight:600;color:#374151;white-space:nowrap">🏢 代理商</label>
-          <input type="text" id="agentName" value="${window._lastAgentName||''}" placeholder="输入代理商名称（将显示在报价图上）" style="flex:1;padding:8px 12px;border:1px solid var(--line);border-radius:6px;font-size:13px;outline:none;font-family:inherit" oninput="window._lastAgentName=this.value">
+          <input type="text" id="agentName" value="${window._lastAgentName||''}" placeholder="输入代理商名称（将显示在报价图上）" style="flex:1;padding:8px 12px;border:1px solid var(--line);border-radius:6px;font-size:13px;outline:none;font-family:inherit" oninput="window._lastAgentName=this.value;localStorage.setItem('doris_agent_name',this.value)">
         </div>
       </div>
     </div>
