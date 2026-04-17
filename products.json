@@ -1,0 +1,294 @@
+{
+  "housings": [
+    { "model": "DA-H1000XXXX", "name": "Housing", "retail": 26666, "agent": 14666 },
+    { "model": "DA-PEVF1000001", "name": "电子取景器", "retail": 6900, "agent": 4485 },
+    { "model": "DA-PB10010000", "name": "电池仓", "retail": 2080, "agent": 1352 }
+  ],
+  "ports": [
+    { "model": "DA-PD1000140", "name": "140鱼眼Port", "retail": 7650, "agent": 4973 },
+    { "model": "DA-PD1000180", "name": "180广角Port", "retail": 8900, "agent": 5785 }
+  ],
+  "rings": [
+    { "model": "DA-PJ1000050", "name": "50mm镜筒", "retail": 1475, "agent": 958.8 },
+    { "model": "DA-PJ1000073", "name": "73mm镜筒", "retail": 1510, "agent": 981.5 },
+    { "model": "DA-PJ1000087", "name": "87mm镜筒", "retail": 1570, "agent": 1021 },
+    { "model": "DA-PM1000095", "name": "95mm微距筒", "retail": 2465, "agent": 1602 },
+    { "model": "DA-PM1000110", "name": "110mm微距筒", "retail": 2560, "agent": 1664 },
+    { "model": "DA-PM1000115", "name": "115mm微距筒", "retail": 2590, "agent": 1684 },
+    { "model": "DA-PM1000129", "name": "129mm微距筒", "retail": 2630, "agent": 1710 },
+    { "model": "DA-PY1000025", "name": "延伸环25mm", "retail": 1320, "agent": 858 }
+  ],
+  "adapters": [
+    { "model": "DA-PZ1000018", "name": "转接环18mm", "retail": 1260, "agent": 819 }
+  ],
+  "zoom_gears": [
+    { "model": "DA-BC100815041", "name": "变焦环", "retail": 1200, "agent": 780, "lens": "佳能 EF 8-15mm Fisheye" },
+    { "model": "DA-BC101535281", "name": "变焦环", "retail": 1200, "agent": 780, "lens": "佳能 RF 15-35mm/F2.8" },
+    { "model": "DA-BN101424281", "name": "变焦环", "retail": 1200, "agent": 780, "lens": "尼康 Z 12-24mm/F2.8" },
+    { "model": "DA-BN101430041", "name": "变焦环", "retail": 1200, "agent": 780, "lens": "尼康 Z 14-30mm/f4" },
+    { "model": "DA-BN100815041", "name": "变焦环", "retail": 1200, "agent": 780, "lens": "尼康 AF-S 8-15 Fisheye" },
+    { "model": "DA-BS101635281", "name": "变焦环", "retail": 1200, "agent": 780, "lens": "索尼 FE 16-35mm/F2.8一代" },
+    { "model": "DA-BS101635282", "name": "变焦环", "retail": 1200, "agent": 780, "lens": "索尼 FE 16-35mm/F2.8二代" },
+    { "model": "DA-BS101424281", "name": "变焦环", "retail": 1200, "agent": 780, "lens": "索尼 FE 14-24mm/F2.8" },
+    { "model": "DA-BS101424401", "name": "变焦环", "retail": 1200, "agent": 780, "lens": "索尼 FE 14-24mm/F4" }
+  ],
+  "shutter_cables": [
+    { "model": "DA-KC10000001", "name": "快门线", "retail": 60, "agent": 39, "cameras": ["Canon R6", "Canon R6mⅡ", "Canon R7"] },
+    { "model": "DA-KC10000003", "name": "快门线", "retail": 60, "agent": 39, "cameras": ["Canon R5", "Canon R5mⅡ"] },
+    { "model": "DA-KN10000001", "name": "快门线", "retail": 90, "agent": 58.5, "cameras": ["Nikon Z8"] },
+    { "model": "DA-KN10000003", "name": "快门线", "retail": 60, "agent": 39, "cameras": ["Nikon Z7Ⅱ", "Nikon Z7", "Nikon Z6Ⅲ", "Nikon Z6Ⅱ", "Nikon Z6", "Nikon Z5"] },
+    { "model": "DA-KS10000002up", "name": "快门线", "retail": 60, "agent": 39, "cameras": ["Sony A1Ⅱ", "Sony A1"] },
+    { "model": "DA-KS10000002down", "name": "快门线", "retail": 60, "agent": 39, "cameras": ["Sony A7R5", "Sony A7R4", "Sony A7M4"] }
+  ],
+  "essentials": [
+    { "model": "DA-D10000001", "name": "数据线", "retail": 40, "agent": 26 },
+    { "model": "DA-PFS10000001", "name": "闪光同步器（底座）", "retail": 880, "agent": 572 }
+  ],
+  "accessories": [
+    { "model": "DA-PVD10000001", "name": "抽真空装置", "retail": 860, "agent": 559 },
+    { "model": "DA-PVD10000001", "name": "相机快装板", "retail": 360, "agent": 234 },
+    { "model": "DA-PFT10000001", "name": "引闪器（光纤同步器）", "retail": 680, "agent": 442 }
+  ],
+  "brands": {
+    "sony": {
+      "name": "Sony 索尼",
+      "cameras": [
+        { "name": "Sony A1Ⅱ", "cable_key": "DA-KS10000002up" },
+        { "name": "Sony A1", "cable_key": "DA-KS10000002up" },
+        { "name": "Sony A7R5", "cable_key": "DA-KS10000002down" },
+        { "name": "Sony A7R4", "cable_key": "DA-KS10000002down" },
+        { "name": "Sony A7M5", "cable_key": "DA-KS10000002down" },
+        { "name": "Sony A7M4", "cable_key": "DA-KS10000002down" }
+      ],
+      "lenses": [
+        {
+          "name": "FE 16-35mm F2.8 GM II",
+          "category": "广角",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PJ1000087", "note": "87mm镜筒" },
+            { "type": "zoom_gear", "model": "DA-BS101635282" }
+          ]
+        },
+        {
+          "name": "FE 16-35mm F2.8 GM",
+          "category": "广角",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PJ1000073", "note": "73mm镜筒" },
+            { "type": "zoom_gear", "model": "DA-BS101635281" }
+          ]
+        },
+        {
+          "name": "FE 14-24mm F2.8 GM",
+          "category": "广角",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PJ1000087", "note": "87mm镜筒" },
+            { "type": "zoom_gear", "model": "DA-BS101424281" }
+          ]
+        },
+        {
+          "name": "FE 14-24mm F4 G",
+          "category": "广角",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PJ1000087", "note": "87mm镜筒(待确认)" },
+            { "type": "zoom_gear", "model": "DA-BS101424401", "status": "❌ 待开发" }
+          ]
+        },
+        {
+          "name": "FE 90mm F2.8 Macro G OSS",
+          "category": "微距",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PM1000110", "note": "110mm微距筒" }
+          ]
+        },
+        {
+          "name": "FE 100mm F2.8 STF GM OSS",
+          "category": "微距",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PM1000115", "note": "115mm微距筒" }
+          ]
+        },
+        {
+          "name": "FE 100mm F2.8 Macro",
+          "category": "微距",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PM1000115", "note": "115mm微距筒" }
+          ]
+        },
+        {
+          "name": "FE 8-15mm F4 Fisheye",
+          "category": "鱼眼",
+          "items": [
+            { "type": "port", "model": "DA-PD1000140" },
+            { "type": "ring", "model": "DA-PJ1000050", "note": "50mm镜筒" },
+            { "type": "zoom_gear", "model": null, "status": "❌ 待开发" }
+          ]
+        }
+      ]
+    },
+    "canon": {
+      "name": "Canon 佳能",
+      "cameras": [
+        { "name": "Canon R5mⅡ", "cable_key": "DA-KC10000003" },
+        { "name": "Canon R5", "cable_key": "DA-KC10000003" },
+        { "name": "Canon R6mⅡ", "cable_key": "DA-KC10000001" },
+        { "name": "Canon R6", "cable_key": "DA-KC10000001" },
+        { "name": "Canon R7", "cable_key": "DA-KC10000001" }
+      ],
+      "lenses": [
+        {
+          "name": "RF 15-35mm F2.8 L IS USM",
+          "category": "广角",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PJ1000087", "note": "87mm镜筒" },
+            { "type": "zoom_gear", "model": "DA-BC101535281" }
+          ]
+        },
+        {
+          "name": "RF 14-35mm F4 L IS USM",
+          "category": "广角",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PJ1000087", "note": "87mm镜筒(待确认)" },
+            { "type": "zoom_gear", "model": null, "status": "❌ 待开发" }
+          ]
+        },
+        {
+          "name": "RF 16-35mm F4 L IS USM",
+          "category": "广角",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PJ1000087", "note": "87mm镜筒(待确认)" },
+            { "type": "zoom_gear", "model": null, "status": "❌ 待开发" }
+          ]
+        },
+        {
+          "name": "EF 8-15mm F4 L Fisheye",
+          "category": "鱼眼",
+          "items": [
+            { "type": "port", "model": "DA-PD1000140" },
+            { "type": "ring", "model": "DA-PJ1000050", "note": "50mm镜筒" },
+            { "type": "zoom_gear", "model": "DA-BC100815041" }
+          ]
+        },
+        {
+          "name": "RF 7-14mm F2.8-3.5 L Fisheye STM",
+          "category": "鱼眼",
+          "items": [
+            { "type": "port", "model": "DA-PD1000140" },
+            { "type": "ring", "model": null, "note": "镜筒待确认", "status": "❓ 待确认" },
+            { "type": "zoom_gear", "model": null, "status": "❓ 待确认" }
+          ]
+        },
+        {
+          "name": "RF-S 7.8mm F4 Fisheye",
+          "category": "鱼眼",
+          "items": [
+            { "type": "port", "model": "DA-PD1000140" },
+            { "type": "ring", "model": "DA-PJ1000050", "note": "50mm镜筒(APS-C)" },
+            { "type": "zoom_gear", "model": null, "status": "❌ 待开发(APS-C)" }
+          ]
+        },
+        {
+          "name": "RF 100mm F2.8 L Macro IS USM",
+          "category": "微距",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PM1000129", "note": "129mm微距筒" }
+          ]
+        },
+        {
+          "name": "EF 100mm F2.8 L Macro IS USM",
+          "category": "微距",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PM1000129", "note": "129mm微距筒" }
+          ]
+        }
+      ]
+    },
+    "nikon": {
+      "name": "Nikon 尼康",
+      "cameras": [
+        { "name": "Nikon Z8", "cable_key": "DA-KN10000001" },
+        { "name": "Nikon Z7Ⅱ", "cable_key": "DA-KN10000003" },
+        { "name": "Nikon Z7", "cable_key": "DA-KN10000003" },
+        { "name": "Nikon Z6Ⅲ", "cable_key": "DA-KN10000003" },
+        { "name": "Nikon Z6Ⅱ", "cable_key": "DA-KN10000003" },
+        { "name": "Nikon Z6", "cable_key": "DA-KN10000003" },
+        { "name": "Nikon Z5", "cable_key": "DA-KN10000003" }
+      ],
+      "lenses": [
+        {
+          "name": "Z 14-24mm F2.8 S",
+          "category": "广角",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PJ1000087", "note": "87mm镜筒" },
+            { "type": "zoom_gear", "model": "DA-BN101424281" }
+          ]
+        },
+        {
+          "name": "Z 14-30mm F4 S",
+          "category": "广角",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PJ1000087", "note": "87mm镜筒(待确认)" },
+            { "type": "zoom_gear", "model": "DA-BN101430041" }
+          ]
+        },
+        {
+          "name": "Z 12-24mm F4 S",
+          "category": "广角",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PJ1000087", "note": "87mm镜筒(待确认)" },
+            { "type": "zoom_gear", "model": "DA-BN101424281", "status": "⚠️ 可共用12-24环" }
+          ]
+        },
+        {
+          "name": "AF-S 8-15mm F3.5-4.5 Fisheye",
+          "category": "鱼眼",
+          "items": [
+            { "type": "port", "model": "DA-PD1000140" },
+            { "type": "ring", "model": "DA-PJ1000050", "note": "50mm镜筒" },
+            { "type": "zoom_gear", "model": "DA-BN100815041" }
+          ]
+        },
+        {
+          "name": "Z 8-15mm F3.5-4.5 S Fisheye",
+          "category": "鱼眼",
+          "items": [
+            { "type": "port", "model": "DA-PD1000140" },
+            { "type": "ring", "model": "DA-PJ1000050", "note": "50mm镜筒(待确认)" },
+            { "type": "zoom_gear", "model": null, "status": "❌ 待开发" }
+          ]
+        },
+        {
+          "name": "Z 105mm F2.8 S Macro",
+          "category": "微距",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "ring", "model": "DA-PM1000115", "note": "115mm微距筒" }
+          ]
+        },
+        {
+          "name": "AF-S 60mm F2.8 G ED Micro",
+          "category": "微距",
+          "items": [
+            { "type": "port", "model": "DA-PD1000180" },
+            { "type": "adapter", "model": "DA-PZ1000018" },
+            { "type": "ring", "model": "DA-PM1000095", "note": "95mm微距筒" }
+          ]
+        }
+      ]
+    }
+  }
+}

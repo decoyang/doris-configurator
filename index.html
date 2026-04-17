@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Doris Smarthousing 装机方案配置表</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+:root {
+  --deep: #0a2647;
+  --primary: #144272;
+  --accent: #205295;
+  --light: #e8f0fe;
+  --ice: #f5f8fc;
+  --line: #d1d9e6;
+  --text: #1a2332;
+  --muted: #6b7b8d;
+  --white: #fff;
+  --green: #16a34a;
+  --red: #dc2626;
+  --orange: #ea580c;
+  --gap-bg: #fef2f2;
+  --gap-text: #b91c1c;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--ice);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--deep) 0%, var(--primary) 100%);
+  color: var(--white);
+  padding: 20px 0;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+.header { display: flex; flex-direction: column; align-items: center; }
+.header .logo-wrap { display: flex; align-items: center; gap: 12px; }
+.header .logo-wrap img { height: 36px; width: auto; }
+.header h1 { font-size: 20px; font-weight: 600; letter-spacing: 1px; }
+.header .subtitle { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+
+/* Steps indicator */
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  transition: all 0.3s;
+}
+.step.active { color: var(--accent); font-weight: 600; }
+.step.done { color: var(--green); }
+.step .num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+  background: var(--ice);
+  border: 2px solid var(--line);
+  transition: all 0.3s;
+}
+.step.active .num { background: var(--accent); color: white; border-color: var(--accent); }
+.step.done .num { background: var(--green); color: white; border-color: var(--green); }
+.step .arrow { color: var(--line); font-size: 10px; }
+
+/* Main container */
+.container { max-width: 720px; margin: 0 auto; padding: 20px 16px 100px; }
+
+/* Section panels */
+.panel {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  display: none;
+}
+.panel.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.panel-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--deep);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--light);
+}
+
+/* Brand selection */
+.brand-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.brand-card {
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--white);
+}
+.brand-card:hover { border-color: var(--accent); background: var(--light); }
+.brand-card.selected { border-color: var(--accent); background: var(--accent); color: white; }
+.brand-card .icon { font-size: 32px; margin-bottom: 8px; }
+.brand-card .icon img { height: 36px; width: auto; max-width: 100%; object-fit: contain; }
+.brand-card .icon-text { font-size: 26px; font-weight: 800; letter-spacing: 1px; font-family: 'Arial Black', Arial, sans-serif; }
+.brand-card .label { font-size: 14px; font-weight: 600; }
+
+/* Camera selection */
+.camera-list { display: flex; flex-direction: column; gap: 8px; }
+.camera-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+.camera-item:hover { background: var(--light); }
+.camera-item.selected { border-color: var(--accent); background: var(--accent); color: white; }
+.camera-item .tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--light);
+  color: var(--accent);
+}
+.camera-item.selected .tag { background: rgba(255,255,255,0.2); color: white; }
+
+/* Lens selection */
+.lens-category {
+  margin-bottom: 16px;
+}
+.lens-category-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 8px;
+  padding-left: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.lens-list { display: flex; flex-direction: column; gap: 6px; }
+.lens-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+.lens-item:hover { background: var(--ice); }
+.lens-item.selected { border-color: var(--green); background: #f0fdf4; }
+.lens-check {
+  width: 20px; height: 20px;
+  border: 2px solid var(--line);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: white;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.lens-item.selected .lens-check { background: var(--green); border-color: var(--green); }
+.lens-status {
+  margin-left: auto;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.status-ok { background: #dcfce7; color: #15803d; }
+.status-warn { background: #fef3c7; color: #92400e; }
+.status-missing { background: var(--gap-bg); color: var(--gap-text); }
+
+/* Result page */
+.result-header {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--deep), var(--primary));
+  border-radius: 12px;
+  color: white;
+  margin-bottom: 20px;
+}
+.result-header h2 { font-size: 18px; margin-bottom: 4px; }
+.result-header .config { font-size: 13px; opacity: 0.8; }
+
+.config-section {
+  background: var(--white);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.config-section-title {
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  background: var(--accent);
+}
+.config-section-body { padding: 0; }
+
+.config-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--ice);
+  font-size: 13px;
+  gap: 8px;
+}
+.config-item:last-child { border-bottom: none; }
+.config-item .ci-left { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.config-item .ci-name { font-weight: 600; }
+.config-item .ci-model { font-size: 11px; color: var(--muted); }
+.config-item .ci-note { font-size: 11px; color: var(--orange); }
+.config-item .ci-right { text-align: right; flex-shrink: 0; }
+.config-item .ci-price { font-weight: 700; color: var(--deep); font-size: 14px; }
+.config-item .ci-price-na { color: var(--muted); font-size: 12px; }
+.config-item.gap-item { background: var(--gap-bg); }
+.config-item.warn-item { background: #fffbeb; }
+
+/* Price mode tabs */
+.price-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.price-tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--ice);
+  color: var(--muted);
+  border: none;
+}
+.price-tab.active-agent {
+  background: var(--accent);
+  color: white;
+}
+.price-tab.active-retail {
+  background: var(--deep);
+  color: white;
+}
+
+/* Total */
+.total-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+.total-bar.agent-mode { background: var(--accent); color: white; }
+.total-bar.retail-mode { background: var(--deep); color: white; }
+.total-bar .label { font-size: 14px; }
+.total-bar .amount { font-size: 24px; font-weight: 800; }
+
+/* Buttons */
+.btn-row { display: flex; gap: 12px; margin-top: 20px; }
+.btn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--deep); }
+.btn-secondary { background: var(--ice); color: var(--accent); }
+.btn-secondary:hover { background: var(--light); }
+.btn-outline { background: white; color: var(--accent); border: 2px solid var(--accent); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-add-accessory {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: 2px dashed var(--line);
+  border-radius: 8px;
+  background: var(--ice);
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+.btn-add-accessory:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Accessory checkboxes */
+.accessory-list {
+  display: none;
+  padding: 12px 16px;
+  background: var(--ice);
+  border-radius: 0 0 8px 8px;
+}
+.accessory-list.show { display: block; }
+.accessory-opt {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0;
+  font-size: 13px;
+  cursor: pointer;
+}
+.accessory-opt input[type="checkbox"] {
+  width: 16px; height: 16px;
+  accent-color: var(--accent);
+}
+.accessory-opt .acc-price { margin-left: auto; color: var(--deep); font-weight: 600; }
+
+/* Extra notes textarea */
+.extra-notes {
+  width: 100%;
+  min-height: 100px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+  resize: vertical;
+  outline: none;
+  line-height: 1.6;
+  background: var(--ice);
+}
+.extra-notes:focus { border-color: var(--accent); }
+.extra-notes::placeholder { color: #b0b8c4; }
+
+/* Image generation button */
+.btn-image { background: linear-gradient(135deg, #16a34a, #15803d); color: white; }
+.btn-image:hover { background: linear-gradient(135deg, #15803d, #166534); }
+
+/* Back button */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  margin-bottom: 12px;
+  border: none;
+  background: none;
+  padding: 4px 0;
+}
+.back-btn:hover { color: var(--accent); }
+
+/* Responsive */
+@media (max-width: 480px) {
+  .container { padding: 12px 12px 100px; }
+  .panel { padding: 16px; }
+  .brand-card { padding: 16px 8px; }
+  .brand-card .icon { font-size: 24px; }
+  .header h1 { font-size: 17px; }
+  .step .txt { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-wrap">
+    <img src="doris_logo.png" alt="Doris">
+    <h1>Doris Smarthousing 装机方案配置表</h1>
+  </div>
+  <div class="subtitle">为您的客户快速推荐水下摄影套装</div>
+</div>
+
+<div class="steps">
+  <div class="step active" id="step1"><span class="num">1</span><span class="txt">选品牌</span></div>
+  <span class="arrow">›</span>
+  <div class="step" id="step2"><span class="num">2</span><span class="txt">选机身</span></div>
+  <span class="arrow">›</span>
+  <div class="step" id="step3"><span class="num">3</span><span class="txt">选镜头</span></div>
+  <span class="arrow">›</span>
+  <div class="step" id="step4"><span class="num">4</span><span class="txt">方案</span></div>
+</div>
+
+<div class="container">
+
+  <!-- Step 1: Brand -->
+  <div class="panel active" id="panel1">
+    <div class="panel-title">选择相机品牌</div>
+    <div class="brand-grid" id="brandGrid"></div>
+  </div>
+
+  <!-- Step 2: Camera -->
+  <div class="panel" id="panel2">
+    <button class="back-btn" onclick="goStep(1)">‹ 返回选择品牌</button>
+    <div class="panel-title">选择相机型号</div>
+    <div class="camera-list" id="cameraList"></div>
+  </div>
+
+  <!-- Step 3: Lenses -->
+  <div class="panel" id="panel3">
+    <button class="back-btn" onclick="goStep(2)">‹ 返回选择机身</button>
+    <div class="panel-title">选择镜头（可多选）</div>
+    <div id="lensSelector"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goStep(2)">上一步</button>
+      <button class="btn btn-primary" id="btnGenerate" onclick="goStep(4)" disabled>生成方案 ›</button>
+    </div>
+  </div>
+
+  <!-- Step 4: Result -->
+  <div class="panel" id="panel4">
+    <button class="back-btn" onclick="goStep(3)">‹ 返回修改镜头</button>
+    <div id="resultContent"></div>
+  </div>
+
+</div>
+
+<script>
+let DATA = null;
+let state = { brand: null, camera: null, selectedLenses: [], accessories: {}, priceMode: 'agent' }; // agent | retail
+
+async function loadData() {
+  const resp = await fetch('products.json?t=' + Date.now());
+  DATA = await resp.json();
+  renderBrands();
+}
+
+// === Brand ===
+function renderBrands() {
+  const grid = document.getElementById('brandGrid');
+  const brandLogos = {
+    sony: `<div style="background:#000;color:#fff;font-size:14px;font-weight:800;letter-spacing:2px;padding:5px 12px;border-radius:4px">SONY</div>`,
+    canon: `<div style="display:flex;flex-direction:column;align-items:center;gap:2px"><div style="width:42px;height:42px;border-radius:50%;background:#cc0000;display:flex;align-items:center;justify-content:center"><span style="color:#fff;font-size:10px;font-weight:800;letter-spacing:0.5px">Canon</span></div></div>`,
+    nikon: `<div style="display:flex;flex-direction:column;align-items:center;gap:2px"><div style="background:#ffc800;color:#000;font-size:14px;font-weight:900;letter-spacing:2px;padding:4px 10px;border-radius:3px;clip-path:polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%)">NIKON</div></div>`
+  };
+  grid.innerHTML = Object.entries(DATA.brands).map(([key, b]) => `
+    <div class="brand-card" onclick="selectBrand('${key}')">
+      <div class="icon">${brandLogos[key] || brandLogos.sony}</div>
+      <div class="label">${b.name}</div>
+    </div>
+  `).join('');
+}
+
+function selectBrand(key) {
+  state.brand = key;
+  document.querySelectorAll('.brand-card').forEach(c => c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  setTimeout(() => { renderCameras(); goStep(2); }, 200);
+}
+
+// === Camera ===
+function renderCameras() {
+  const list = document.getElementById('cameraList');
+  const cameras = DATA.brands[state.brand].cameras;
+  list.innerHTML = cameras.map((c, i) => `
+    <div class="camera-item" onclick="selectCamera(${i}, this)">
+      <span>${c.name}</span>
+      <span class="tag" id="cableTag${i}">—</span>
+    </div>
+  `).join('');
+  // Pre-fill cable info
+  cameras.forEach((c, i) => {
+    const cable = DATA.shutter_cables.find(sc => sc.model === c.cable_key);
+    document.getElementById('cableTag' + i).textContent = cable ? cable.model : '—';
+  });
+}
+
+function selectCamera(idx, el) {
+  state.camera = DATA.brands[state.brand].cameras[idx];
+  document.querySelectorAll('.camera-item').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  setTimeout(() => { renderLenses(); goStep(3); }, 200);
+}
+
+// === Lenses ===
+function renderLenses() {
+  const container = document.getElementById('lensSelector');
+  const brand = DATA.brands[state.brand];
+  const grouped = {};
+  brand.lenses.forEach((l, i) => {
+    if (!grouped[l.category]) grouped[l.category] = [];
+    grouped[l.category].push({ ...l, idx: i });
+  });
+  container.innerHTML = Object.entries(grouped).map(([cat, lenses]) => `
+    <div class="lens-category">
+      <div class="lens-category-title">${cat}</div>
+      <div class="lens-list">
+        ${lenses.map(l => {
+          const hasGap = l.items.some(it => it.status && it.status.includes('❌'));
+          const hasWarn = l.items.some(it => it.status && it.status.includes('❓'));
+          const statusCls = hasGap ? 'status-missing' : hasWarn ? 'status-warn' : 'status-ok';
+          const statusTxt = hasGap ? '缺配件' : hasWarn ? '待确认' : '齐全';
+          return `
+            <div class="lens-item" data-idx="${l.idx}" onclick="toggleLens(${l.idx}, this)">
+              <div class="lens-check"></div>
+              <div style="flex:1;min-width:0">${l.name}</div>
+              <div class="lens-status ${statusCls}">${statusTxt}</div>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
+  state.selectedLenses = [];
+  updateGenBtn();
+}
+
+function toggleLens(idx, el) {
+  const pos = state.selectedLenses.indexOf(idx);
+  if (pos >= 0) {
+    state.selectedLenses.splice(pos, 1);
+    el.classList.remove('selected');
+  } else {
+    state.selectedLenses.push(idx);
+    el.classList.add('selected');
+  }
+  updateGenBtn();
+}
+
+function updateGenBtn() {
+  document.getElementById('btnGenerate').disabled = state.selectedLenses.length === 0;
+}
+
+// === Result ===
+function generateResult() {
+  const brand = DATA.brands[state.brand];
+  const camera = state.camera;
+  const lenses = state.selectedLenses.map(i => brand.lenses[i]).filter(Boolean);
+  if (!lenses.length) { document.getElementById('resultContent').innerHTML = '<div style="padding:40px;text-align:center;color:#6b7b8d">请返回选择镜头</div>'; return; }
+  const pm = state.priceMode; // 'agent' | 'retail'
+
+  // Build parts list
+  let totalVal = 0;
+
+  // Housing
+  const housing = DATA.housings[0];
+  totalVal += housing[pm];
+
+  // Shutter cable
+  const cable = DATA.shutter_cables.find(sc => sc.model === camera.cable_key);
+  totalVal += cable[pm];
+
+  // Essentials (标配配件)
+  if (DATA.essentials && DATA.essentials.length) {
+    DATA.essentials.forEach(e => { totalVal += e[pm]; });
+  }
+
+  // Collect all unique lens parts
+  const partMap = new Map();
+  lenses.forEach(lens => {
+    lens.items.forEach(item => {
+      if (item.model && !partMap.has(item.model)) {
+        partMap.set(item.model, { item, lensName: lens.name });
+      }
+    });
+  });
+
+  const ports = [], rings = [], gears = [], adapters = [];
+  let gapItems = [], warnItems = [];
+
+  lenses.forEach(lens => {
+    lens.items.forEach(item => {
+      if (item.status && item.status.includes('❌')) {
+        gapItems.push({ lens: lens.name, item });
+      } else if (item.status && item.status.includes('❓')) {
+        warnItems.push({ lens: lens.name, item });
+      }
+    });
+  });
+
+  partMap.forEach(({ item }, model) => {
+    const entry = { model, item };
+    if (item.type === 'port') ports.push(entry);
+    else if (item.type === 'ring') rings.push(entry);
+    else if (item.type === 'zoom_gear') gears.push(entry);
+    else if (item.type === 'adapter') adapters.push(entry);
+  });
+
+  // Calculate prices
+  function getPrice(dataArr, model) {
+    const d = dataArr.find(x => x.model === model);
+    return d && d[pm] ? d[pm] : null;
+  }
+  ports.forEach(p => { const v = getPrice(DATA.ports, p.model); if (v) totalVal += v; });
+  rings.forEach(r => { const v = getPrice(DATA.rings, r.model); if (v) totalVal += v; });
+  gears.forEach(g => { const v = getPrice(DATA.zoom_gears, g.model); if (v) totalVal += v; });
+  adapters.forEach(a => { const v = getPrice(DATA.adapters, a.model); if (v) totalVal += v; });
+
+  const priceLabel = pm === 'agent' ? '代理价' : '零售价';
+
+  // Render parts helper
+  function renderParts(type, parts, dataArr) {
+    return parts.map(p => {
+      const d = dataArr.find(x => x.model === p.model);
+      const price = d && d[pm] ? d[pm] : null;
+      return d ? `
+        <div class="config-item">
+          <div class="ci-left">
+            <span class="ci-name">${d.name}</span>
+            <span class="ci-model">${d.model}</span>
+            ${p.item.note ? `<span class="ci-note">📌 ${p.item.note}</span>` : ''}
+          </div>
+          <div class="ci-right">
+            ${price !== null ? `<span class="ci-price">¥${price.toLocaleString()}</span>` : '<span class="ci-price-na">待定</span>'}
+          </div>
+        </div>` : '';
+    }).join('');
+  }
+
+  let html = `
+    <div class="result-header">
+      <h2>🐳 推荐方案</h2>
+      <div class="config">${DATA.brands[state.brand].name} · ${camera.name} · ${lenses.map(l => l.name).join(' + ')}</div>
+    </div>
+
+    <div class="price-tabs">
+      <button class="price-tab ${pm === 'agent' ? 'active-agent' : ''}" onclick="switchPriceMode('agent')">🔒 代理商价格</button>
+      <button class="price-tab ${pm === 'retail' ? 'active-retail' : ''}" onclick="switchPriceMode('retail')">🏷️ 零售指导价</button>
+    </div>
+
+    <div class="config-section">
+      <div class="config-section-title" style="background:#6b7280">👤 客户信息</div>
+      <div class="config-section-body" style="padding:14px 16px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <label style="font-size:13px;font-weight:600;color:#374151;white-space:nowrap">客户姓名</label>
+          <input type="text" id="customerName" value="${window._lastCustomerName||''}" placeholder="输入客户姓名（将显示在报价图上）" style="flex:1;padding:8px 12px;border:1px solid var(--line);border-radius:6px;font-size:13px;outline:none;font-family:inherit" oninput="window._lastCustomerName=this.value">
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+          <label style="font-size:13px;font-weight:600;color:#374151;white-space:nowrap">🏢 代理商</label>
+          <input type="text" id="agentName" value="${window._lastAgentName||''}" placeholder="输入代理商名称（将显示在报价图上）" style="flex:1;padding:8px 12px;border:1px solid var(--line);border-radius:6px;font-size:13px;outline:none;font-family:inherit" oninput="window._lastAgentName=this.value">
+        </div>
+      </div>
+    </div>
+
+    <div class="config-section">
+      <div class="config-section-title">📐 主机 & 线材</div>
+      <div class="config-section-body">
+        <div class="config-item">
+          <div class="ci-left">
+            <span class="ci-name">${housing.name}</span>
+            <span class="ci-model">${housing.model}</span>
+          </div>
+          <div class="ci-right"><span class="ci-price">¥${housing[pm].toLocaleString()}</span></div>
+        </div>
+        <div class="config-item">
+          <div class="ci-left">
+            <span class="ci-name">${cable.name}</span>
+            <span class="ci-model">${cable.model}（${camera.name}）</span>
+          </div>
+          <div class="ci-right"><span class="ci-price">¥${cable[pm].toLocaleString()}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="config-section">
+      <div class="config-section-title" style="background:#475569">📎 标配配件</div>
+      <div class="config-section-body">
+        ${DATA.essentials.map(e => `
+          <div class="config-item">
+            <div class="ci-left">
+              <span class="ci-name">${e.name}</span>
+              <span class="ci-model">${e.model}</span>
+            </div>
+            <div class="ci-right"><span class="ci-price">¥${e[pm].toLocaleString()}</span></div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+  if (ports.length) {
+    html += `<div class="config-section"><div class="config-section-title">🔧 Port（${ports.length}个）</div><div class="config-section-body">${renderParts('port', ports, DATA.ports)}</div></div>`;
+  }
+  if (adapters.length) {
+    html += `<div class="config-section"><div class="config-section-title">🔗 转接环</div><div class="config-section-body">${renderParts('adapter', adapters, DATA.adapters)}</div></div>`;
+  }
+  if (rings.length) {
+    html += `<div class="config-section"><div class="config-section-title">📏 镜筒</div><div class="config-section-body">${renderParts('ring', rings, DATA.rings)}</div></div>`;
+  }
+  if (gears.length) {
+    html += `<div class="config-section"><div class="config-section-title">⚙️ 变焦环</div><div class="config-section-body">${renderParts('gear', gears, DATA.zoom_gears)}</div></div>`;
+  }
+
+  // Gap / warn items
+  if (gapItems.length) {
+    html += `<div class="config-section"><div class="config-section-title" style="background:var(--red)">⚠️ 缺失配件（需开发）</div><div class="config-section-body">
+      ${gapItems.map(g => `
+        <div class="config-item gap-item">
+          <div class="ci-left">
+            <span class="ci-name">${g.lens}</span>
+            <span class="ci-note">${g.item.note || ''} ${g.item.status || ''}</span>
+          </div>
+        </div>`).join('')}
+    </div></div>`;
+  }
+  if (warnItems.length) {
+    html += `<div class="config-section"><div class="config-section-title" style="background:var(--orange)">❓ 待确认配件</div><div class="config-section-body">
+      ${warnItems.map(w => `
+        <div class="config-item warn-item">
+          <div class="ci-left">
+            <span class="ci-name">${w.lens}</span>
+            <span class="ci-note">${w.item.note || ''} ${w.item.status || ''}</span>
+          </div>
+        </div>`).join('')}
+    </div></div>`;
+  }
+
+  // Flash trigger option
+  html += `
+    <div class="config-section">
+      <div class="config-section-title" style="background:#475569">💡 配置确认</div>
+      <div class="config-section-body" style="padding:14px 16px">
+        <label class="accessory-opt" style="padding:6px 0;border-bottom:1px solid var(--ice)">
+          <input type="checkbox" id="chkVacuum" ${window._vacuumChecked ? 'checked' : ''} onchange="window._vacuumChecked=this.checked" style="width:16px;height:16px;accent-color:var(--accent)">
+          <span style="flex:1;font-weight:600">需配抽真空装置</span>
+          <span class="acc-price">¥${(pm==='retail'?860:559).toLocaleString()}</span>
+        </label>
+        <label class="accessory-opt" style="padding:6px 0">
+          <input type="checkbox" id="chkFlash" ${window._flashChecked ? 'checked' : ''} onchange="window._flashChecked=this.checked" style="width:16px;height:16px;accent-color:var(--accent)">
+          <span style="flex:1;font-weight:600">客户使用闪灯（需配引闪器）</span>
+          <span class="acc-price">¥${(pm==='retail'?680:442).toLocaleString()}</span>
+        </label>
+      </div>
+    </div>`;
+
+  // Accessories
+  html += `
+    <div class="config-section">
+      <div class="config-section-title">📦 其他可选配件</div>
+      <div class="config-section-body">
+        <div class="btn-add-accessory" onclick="toggleAccessories()">+ 添加可选配件</div>
+        <div class="accessory-list" id="accList">
+          ${DATA.accessories.map(a => `
+            <label class="accessory-opt">
+              <input type="checkbox" data-price="${a[pm]}" data-name="${a.name}" data-model="${a.model}" onchange="toggleAccessory(this)">
+              <span>${a.name}</span>
+              <span class="acc-price">¥${a[pm].toLocaleString()}</span>
+            </label>
+          `).join('')}
+        </div>
+      </div>
+    </div>`;
+
+  // Extra requirements
+  html += `
+    <div class="config-section">
+      <div class="config-section-title" style="background:#6b7280">📝 额外需求记录</div>
+      <div class="config-section-body" style="padding:16px">
+        <textarea id="extraNotes" class="extra-notes" placeholder="记录客户需求中目前产品线尚未覆盖的部分，例如：&#10;- 客户想要XX镜头的Port（待开发）&#10;- 需要定制特殊尺寸镜筒&#10;- 其他备注..." oninput="window._extraNotes=this.value">${window._extraNotes||''}</textarea>
+      </div>
+    </div>`;
+
+  html += `
+    <div class="total-bar ${pm === 'agent' ? 'agent-mode' : 'retail-mode'}">
+      <span class="label">${priceLabel}合计</span>
+      <span class="amount" id="totalAmount">¥${totalVal.toLocaleString()}</span>
+    </div>
+    <div style="background:#fffbeb;border:2px solid #f59e0b;border-radius:10px;padding:14px 16px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <label style="font-size:15px;font-weight:700;color:#92400e;white-space:nowrap">🎯 折扣价</label>
+        <input type="number" id="discountPrice" value="${window._lastDiscountPrice||''}" placeholder="留空则报价图只显示零售价" style="flex:1;padding:10px 14px;border:1px solid #f59e0b;border-radius:8px;font-size:15px;font-weight:600;outline:none;font-family:inherit;color:#92400e" oninput="window._lastDiscountPrice=this.value" min="0">
+      </div>
+      <div style="font-size:11px;color:#b45309;margin-top:6px">输入综合折扣后的最终成交价，将显示在客户报价图中</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goStep(3)">← 修改方案</button>
+      <button class="btn btn-primary btn-image" onclick="generateImage()">📸 生成报价图（发给客户）</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goStep(1)">重新配置</button>
+    </div>`;
+
+  document.getElementById('resultContent').innerHTML = html;
+  window._baseTotal = totalVal;
+}
+
+function switchPriceMode(mode) {
+  state.priceMode = mode;
+  generateResult(); // re-render with new prices
+}
+
+function toggleAccessories() {
+  document.getElementById('accList').classList.toggle('show');
+}
+
+function toggleAccessory(cb) {
+  let total = window._baseTotal || 0;
+  const pm = state.priceMode;
+  // Add vacuum
+  if (window._vacuumChecked) total += (pm === 'retail' ? 860 : 559);
+  // Add flash trigger
+  if (window._flashChecked) total += (pm === 'retail' ? 680 : 442);
+  // Add other checked accessories
+  document.querySelectorAll('#accList input:checked').forEach(c => {
+    total += parseFloat(c.dataset.price);
+  });
+  document.getElementById('totalAmount').textContent = '¥' + total.toLocaleString();
+}
+
+// === Generate Image for Customer ===
+function generateImage() {
+  // Read customer name from input field
+  const nameEl = document.getElementById('customerName');
+  const name = nameEl ? nameEl.value.trim() : '';
+  window._lastCustomerName = name;
+
+  // Read agent name from input field
+  const agentEl = document.getElementById('agentName');
+  const agent = agentEl ? agentEl.value.trim() : '';
+  window._lastAgentName = agent;
+
+  const brand = DATA.brands[state.brand];
+  const camera = state.camera;
+  const lenses = state.selectedLenses.map(i => brand.lenses[i]);
+  const pm = 'retail'; // always retail price for customer image
+  const extraNotes = window._extraNotes || '';
+
+  // Calculate total
+  let totalVal = 0;
+  const housing = DATA.housings[0];
+  totalVal += housing[pm];
+  const cable = DATA.shutter_cables.find(sc => sc.model === camera.cable_key);
+  totalVal += cable[pm];
+
+  // Essentials (标配配件)
+  if (DATA.essentials && DATA.essentials.length) {
+    DATA.essentials.forEach(e => { totalVal += e[pm]; });
+  }
+
+  // Collect unique parts
+  const partMap = new Map();
+  lenses.forEach(lens => {
+    lens.items.forEach(item => {
+      if (item.model && !partMap.has(item.model)) {
+        partMap.set(item.model, { item, lensName: lens.name });
+      }
+    });
+  });
+
+  const ports = [], rings = [], gears = [], adapters = [];
+  partMap.forEach(({ item }, model) => {
+    const entry = { model, item };
+    if (item.type === 'port') ports.push(entry);
+    else if (item.type === 'ring') rings.push(entry);
+    else if (item.type === 'zoom_gear') gears.push(entry);
+    else if (item.type === 'adapter') adapters.push(entry);
+  });
+
+  function getPrice(dataArr, model) {
+    const d = dataArr.find(x => x.model === model);
+    return d && d[pm] ? d[pm] : null;
+  }
+  ports.forEach(p => { const v = getPrice(DATA.ports, p.model); if (v) totalVal += v; });
+  rings.forEach(r => { const v = getPrice(DATA.rings, r.model); if (v) totalVal += v; });
+  gears.forEach(g => { const v = getPrice(DATA.zoom_gears, g.model); if (v) totalVal += v; });
+  adapters.forEach(a => { const v = getPrice(DATA.adapters, a.model); if (v) totalVal += v; });
+
+  // Add selected accessories
+  let accTotal = 0;
+  const accNames = [];
+  document.querySelectorAll('#accList input:checked').forEach(c => {
+    accTotal += parseFloat(c.dataset.price);
+    accNames.push(c.dataset.name);
+  });
+  // Add vacuum
+  const needVacuum = window._vacuumChecked;
+  if (needVacuum) {
+    accTotal += 860; // retail price
+    accNames.push('抽真空装置');
+  }
+  // Add flash trigger
+  const needFlash = window._flashChecked;
+  if (needFlash) {
+    accTotal += 680; // retail price
+    accNames.push('引闪器（光纤同步器）');
+  }
+  totalVal += accTotal;
+
+  // Build item rows
+  function fmtPrice(v) { return v !== null ? '¥' + v.toLocaleString() : '待定'; }
+  function itemRow(name, model, price, note) {
+    const priceStr = fmtPrice(price);
+    const noteStr = note ? `<div style="font-size:9px;color:#92400e;margin-top:1px">📌 ${note}</div>` : '';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #eef2f7;font-size:12px">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;color:#1a2332">${name}</div>
+        <div style="font-size:10px;color:#6b7b8d">${model}</div>
+        ${noteStr}
+      </div>
+      <div style="font-weight:700;color:#0a2647;font-size:13px;flex-shrink:0;margin-left:6px">${priceStr}</div>
+    </div>`;
+  }
+
+  // Build the card HTML (hidden container for rendering)
+  // Fixed width 390px (iPhone 14/15 screen width) for mobile-friendly image
+  const card = document.createElement('div');
+  card.id = '_imgCard';
+  card.style.cssText = 'position:fixed;left:-9999px;top:0;width:390px;background:#fff;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;z-index:-1';
+
+  const today = new Date();
+  const dateStr = today.getFullYear() + '年' + (today.getMonth()+1) + '月' + today.getDate() + '日';
+
+  let cardHtml = `
+    <div style="background:linear-gradient(135deg,#0a2647,#144272);padding:22px 18px;text-align:center;color:#fff">
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px">
+        <img src="doris_logo.png" crossorigin="anonymous" style="height:36px" onerror="this.style.display='none'">
+        <div style="font-size:18px;font-weight:700">Doris Smarthousing</div>
+      </div>
+      <div style="font-size:12px;opacity:0.85">${brand.name} · ${camera.name} · ${lenses.map(l => l.name).join(' + ')}</div>
+      ${name ? `<div style="font-size:16px;font-weight:700;margin-top:10px;letter-spacing:1px">客户：${name}</div>` : ''}
+      ${agent ? `<div style="font-size:12px;font-weight:600;margin-top:4px;opacity:0.8">代理商：${agent}</div>` : ''}
+      <div style="font-size:11px;opacity:0.6;margin-top:8px">报价日期：${dateStr}</div>
+    </div>`;
+
+  // Main parts + Essentials (合并为一个栏目)
+  cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">📐 基础套装</div>`;
+  cardHtml += itemRow(housing.name, housing.model, housing[pm]);
+  cardHtml += itemRow(cable.name, cable.model + '（' + camera.name + '）', cable[pm]);
+  if (DATA.essentials && DATA.essentials.length) {
+    DATA.essentials.forEach(e => {
+      cardHtml += itemRow(e.name, e.model, e[pm]);
+    });
+  }
+
+  if (ports.length) {
+    cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">🔧 Port（${ports.length}个）</div>`;
+    ports.forEach(p => {
+      const d = DATA.ports.find(x => x.model === p.model);
+      if (d) cardHtml += itemRow(d.name, d.model, getPrice(DATA.ports, p.model), p.item.note);
+    });
+  }
+  if (adapters.length) {
+    cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">🔗 转接环</div>`;
+    adapters.forEach(a => {
+      const d = DATA.adapters.find(x => x.model === a.model);
+      if (d) cardHtml += itemRow(d.name, d.model, getPrice(DATA.adapters, a.model), a.item.note);
+    });
+  }
+  if (rings.length) {
+    cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">📏 镜筒</div>`;
+    rings.forEach(r => {
+      const d = DATA.rings.find(x => x.model === r.model);
+      if (d) cardHtml += itemRow(d.name, d.model, getPrice(DATA.rings, r.model), r.item.note);
+    });
+  }
+  if (gears.length) {
+    cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">⚙️ 变焦环</div>`;
+    gears.forEach(g => {
+      const d = DATA.zoom_gears.find(x => x.model === g.model);
+      if (d) cardHtml += itemRow(d.name, d.model, getPrice(DATA.zoom_gears, g.model));
+    });
+  }
+  if (accNames.length) {
+    cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">📦 可选配件</div>`;
+    accNames.forEach(n => {
+      // find acc price
+      const a = DATA.accessories.find(x => x.name === n);
+      if (a) cardHtml += itemRow(a.name, a.model, a[pm]);
+    });
+  }
+
+  // Total
+  const discountVal = parseFloat(document.getElementById('discountPrice')?.value);
+  let totalSection = `<div style="background:linear-gradient(135deg,#0a2647,#144272);padding:16px 18px;display:flex;justify-content:flex-end;align-items:flex-end;gap:20px;color:#fff">`;
+  totalSection += `<div style="text-align:right">
+    <div style="font-size:11px;font-weight:600;opacity:0.7">零售价合计</div>
+    <div style="font-size:20px;font-weight:700;opacity:0.85">¥${totalVal.toLocaleString()}</div>
+  </div>`;
+  if (!isNaN(discountVal) && discountVal > 0) {
+    const saved = totalVal - discountVal;
+    totalSection += `<div style="text-align:right;border-left:1px solid rgba(255,255,255,0.25);padding-left:20px">
+      <div style="font-size:11px;font-weight:600;opacity:0.8">🎯 折扣价 <span style="font-size:10px;opacity:0.6">（优惠¥${saved.toLocaleString()}）</span></div>
+      <div style="font-size:28px;font-weight:900;color:#fbbf24">¥${discountVal.toLocaleString()}</div>
+    </div>`;
+  }
+  totalSection += `</div>`;
+  cardHtml += totalSection;
+
+  // Footer
+  cardHtml += `<div style="padding:12px 18px;text-align:center;font-size:10px;color:#9ca3af;border-top:1px solid #eef2f7;line-height:1.8">
+    Doris Smarthousing · uwsmarthousing.com<br>
+    报价日期：${dateStr}　·　该报价可保持1周<br>
+    报价仅供参考，以实际成交价为准
+  </div>`;
+
+  card.innerHTML = cardHtml;
+  document.body.appendChild(card);
+
+  // Render to canvas
+  html2canvas(card, {
+    scale: 2,
+    backgroundColor: '#ffffff',
+    useCORS: true,
+    allowTaint: true,
+    logging: false
+  }).then(canvas => {
+    // Create download link
+    const link = document.createElement('a');
+    link.download = `Doris_Housing报价_${camera.name}_${new Date().toISOString().slice(0,10)}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    document.body.removeChild(card);
+    // Show toast
+    showToast('报价图已生成，请查看下载');
+  }).catch(err => {
+    console.error(err);
+    document.body.removeChild(card);
+    showToast('生成失败，请重试');
+  });
+}
+
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#16a34a;color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15);animation:fadeIn 0.3s';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; }, 2000);
+  setTimeout(() => document.body.removeChild(toast), 2500);
+}
+
+// === Navigation ===
+function goStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('panel' + i).classList.remove('active');
+    const step = document.getElementById('step' + i);
+    step.classList.remove('active', 'done');
+    if (i < n) step.classList.add('done');
+    if (i === n) step.classList.add('active');
+  }
+  if (n === 4) {
+    try { generateResult(); } catch(e) { console.error('generateResult error:', e); document.getElementById('resultContent').innerHTML = '<div style="padding:40px;text-align:center;color:#dc2626;font-size:14px">⚠️ 方案生成失败，请刷新页面重试<br><small style="color:#6b7b8d">' + e.message + '</small></div>'; }
+  }
+  document.getElementById('panel' + n).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Init
+loadData();
+</script>
+</body>
+</html>
