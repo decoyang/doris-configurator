@@ -229,18 +229,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--ice);
-  font-size: 13px;
+  font-size: 12px;
   gap: 8px;
 }
 .config-item:last-child { border-bottom: none; }
 .config-item .ci-left { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-.config-item .ci-name { font-weight: 600; }
+.config-item .ci-name { font-weight: 600; font-size: 12px; }
 .config-item .ci-model { font-size: 11px; color: var(--muted); }
+.config-item .ci-price { font-weight: 700; color: var(--deep); font-size: 12px; }
 .config-item .ci-note { font-size: 11px; color: var(--orange); }
 .config-item .ci-right { text-align: right; flex-shrink: 0; }
-.config-item .ci-price { font-weight: 700; color: var(--deep); font-size: 14px; }
 .config-item .ci-price-na { color: var(--muted); font-size: 12px; }
 .config-item.gap-item { background: var(--gap-bg); }
 .config-item.warn-item { background: #fffbeb; }
@@ -273,6 +273,36 @@ body {
 .price-tab.active-retail {
   background: var(--deep);
   color: white;
+}
+
+/* Currency selector */
+.currency-selector {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 16px;
+  margin-bottom: 14px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid var(--ice);
+}
+.curr-btn {
+  padding: 5px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.curr-btn:hover { border-color: var(--accent); color: var(--accent); }
+.curr-btn.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
 }
 
 /* Total */
@@ -520,7 +550,100 @@ function t(name) {
 }
 
 let DATA = null;
-let state = { brand: null, camera: null, selectedLenses: [], accessories: {}, priceMode: 'agent' };
+let state = { brand: null, camera: null, selectedLenses: [], accessories: {}, priceMode: 'agent', currency: 'USD' };
+
+// === Currency config ===
+const CURRENCIES = {
+  CNY: { symbol: '¥',   label: 'CNY (¥)',  rate: 1,    defaultRate: 1 },
+  USD: { symbol: '$',   label: 'USD ($)',  rate: 0.14, defaultRate: 0.14 },
+  MYR: { symbol: 'RM',  label: 'MYR (RM)', rate: 0.64, defaultRate: 0.64 },
+  AUD: { symbol: 'A$',  label: 'AUD (A$)', rate: 0.22, defaultRate: 0.22 },
+};
+
+// Load saved rates from localStorage
+(function loadRates() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('doris_currency_rates'));
+    if (saved) {
+      Object.keys(saved).forEach(k => { if (CURRENCIES[k]) CURRENCIES[k].rate = saved[k]; });
+    }
+  } catch(e) {}
+})();
+
+function saveRates() {
+  const rates = {};
+  Object.keys(CURRENCIES).forEach(k => { rates[k] = CURRENCIES[k].rate; });
+  localStorage.setItem('doris_currency_rates', JSON.stringify(rates));
+}
+
+function convertPrice(cnyPrice) {
+  if (cnyPrice == null) return null;
+  const cur = CURRENCIES[state.currency];
+  const converted = cnyPrice * cur.rate;
+  return Math.round(converted);
+}
+
+function currSym() { return CURRENCIES[state.currency].symbol; }
+
+function switchCurrency(code) {
+  state.currency = code;
+  generateResult();
+}
+
+function openRateEditor() {
+  const old = document.getElementById('rateModal');
+  if (old) old.remove();
+
+  let rows = '';
+  Object.entries(CURRENCIES).forEach(([code, c]) => {
+    if (code === 'CNY') return; // CNY is always 1
+    rows += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span style="font-weight:700;font-size:14px;width:50px">${code}</span>
+      <span style="font-size:12px;color:#6b7280">1 CNY =</span>
+      <input type="number" id="rate_${code}" value="${c.rate}" step="0.001" min="0.001" style="flex:1;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;font-weight:600;outline:none">
+      <span style="font-size:12px;color:#6b7280">${code}</span>
+    </div>`;
+  });
+
+  const modal = document.createElement('div');
+  modal.id = 'rateModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10001;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:14px;padding:24px;width:360px;max-width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+      <div style="font-size:16px;font-weight:700;color:#1a2332;margin-bottom:4px">💱 Edit Exchange Rates</div>
+      <div style="font-size:12px;color:#9ca3af;margin-bottom:16px">Base: 1 CNY. Default rates will be shown in gray.</div>
+      ${rows}
+      <div style="display:flex;gap:10px;margin-top:18px">
+        <button onclick="resetRates()" style="flex:1;padding:10px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#6b7280;font-size:13px;font-weight:600;cursor:pointer">Reset Default</button>
+        <button onclick="applyRates()" style="flex:1;padding:10px;border:none;border-radius:8px;background:#16a34a;color:#fff;font-size:13px;font-weight:600;cursor:pointer">Apply</button>
+        <button onclick="document.getElementById('rateModal').remove()" style="flex:1;padding:10px;border:none;border-radius:8px;background:#e5e7eb;color:#374151;font-size:13px;font-weight:600;cursor:pointer">Cancel</button>
+      </div>
+    </div>
+  `;
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
+}
+
+function resetRates() {
+  Object.entries(CURRENCIES).forEach(([code, c]) => {
+    c.rate = c.defaultRate;
+    const input = document.getElementById('rate_' + code);
+    if (input) input.value = c.defaultRate;
+  });
+}
+
+function applyRates() {
+  Object.entries(CURRENCIES).forEach(([code, c]) => {
+    const input = document.getElementById('rate_' + code);
+    if (input) {
+      const val = parseFloat(input.value);
+      if (val > 0) c.rate = val;
+    }
+  });
+  saveRates();
+  document.getElementById('rateModal').remove();
+  generateResult();
+}
 
 async function loadData() {
   const resp = await fetch('products.json?t=' + Date.now());
@@ -683,12 +806,17 @@ function generateResult() {
   adapters.forEach(a => { const v = getPrice(DATA.adapters, a.model); if (v) totalVal += v; });
 
   const priceLabel = pm === 'agent' ? 'Agent Price' : 'Retail Price';
-  const currSym = pm === 'agent' ? '¥' : '¥';
+
+  function fmtPrice(cnyPrice) {
+    if (cnyPrice == null) return null;
+    const val = convertPrice(cnyPrice);
+    return currSym() + val.toLocaleString();
+  }
 
   function renderParts(type, parts, dataArr) {
     return parts.map(p => {
       const d = dataArr.find(x => x.model === p.model);
-      const price = d && d[pm] ? d[pm] : null;
+      const cnyPrice = d && d[pm] ? d[pm] : null;
       return d ? `
         <div class="config-item">
           <div class="ci-left">
@@ -697,7 +825,7 @@ function generateResult() {
             ${p.item.note ? `<span class="ci-note">📌 ${t(p.item.note)}</span>` : ''}
           </div>
           <div class="ci-right">
-            ${price !== null ? `<span class="ci-price">${currSym}${price.toLocaleString()}</span>` : '<span class="ci-price-na">TBD</span>'}
+            ${cnyPrice !== null ? `<span class="ci-price">${fmtPrice(cnyPrice)}</span>` : '<span class="ci-price-na">TBD</span>'}
           </div>
         </div>` : '';
     }).join('');
@@ -712,6 +840,14 @@ function generateResult() {
     <div class="price-tabs">
       <button class="price-tab ${pm === 'agent' ? 'active-agent' : ''}" onclick="switchPriceMode('agent')">🔒 Agent Price</button>
       <button class="price-tab ${pm === 'retail' ? 'active-retail' : ''}" onclick="switchPriceMode('retail')">🏷️ Retail Price</button>
+    </div>
+    <div class="currency-selector">
+      <span style="font-size:12px;color:#6b7280;font-weight:600;margin-right:6px">💱 Currency:</span>
+      ${Object.entries(CURRENCIES).map(([code, c]) => `
+        <button class="curr-btn ${state.currency === code ? 'active' : ''}" onclick="switchCurrency('${code}')">${c.label}</button>
+      `).join('')}
+      <button onclick="openRateEditor()" style="padding:4px 10px;border:1px solid #d1d5db;border-radius:6px;background:#fff;color:#6b7280;font-size:11px;font-weight:600;cursor:pointer;margin-left:4px" title="Edit exchange rates">⚙️</button>
+      <span style="font-size:10px;color:#9ca3af;margin-left:4px">1 CNY = ${CURRENCIES[state.currency].rate} ${state.currency}</span>
     </div>
 
     <div class="config-section">
@@ -736,14 +872,14 @@ function generateResult() {
             <span class="ci-name">${t(housing.name)}</span>
             <span class="ci-model">${housing.model}</span>
           </div>
-          <div class="ci-right"><span class="ci-price">${currSym}${housing[pm].toLocaleString()}</span></div>
+          <div class="ci-right"><span class="ci-price">${fmtPrice(housing[pm])}</span></div>
         </div>
         <div class="config-item">
           <div class="ci-left">
             <span class="ci-name">${t(cable.name)}</span>
             <span class="ci-model">${cable.model} (${camera.name})</span>
           </div>
-          <div class="ci-right"><span class="ci-price">${currSym}${cable[pm].toLocaleString()}</span></div>
+          <div class="ci-right"><span class="ci-price">${fmtPrice(cable[pm])}</span></div>
         </div>
       </div>
     </div>
@@ -757,7 +893,7 @@ function generateResult() {
               <span class="ci-name">${t(e.name)}</span>
               <span class="ci-model">${e.model}</span>
             </div>
-            <div class="ci-right"><span class="ci-price">${currSym}${e[pm].toLocaleString()}</span></div>
+            <div class="ci-right"><span class="ci-price">${fmtPrice(e[pm])}</span></div>
           </div>`).join('')}
       </div>
     </div>`;
@@ -805,12 +941,12 @@ function generateResult() {
         <label class="accessory-opt" style="padding:6px 0;border-bottom:1px solid var(--ice)">
           <input type="checkbox" id="chkVacuum" ${window._vacuumChecked ? 'checked' : ''} onchange="window._vacuumChecked=this.checked" style="width:16px;height:16px;accent-color:var(--accent)">
           <span style="flex:1;font-weight:600">Vacuum Valve System</span>
-          <span class="acc-price">${currSym}${(pm==='retail'?860:559).toLocaleString()}</span>
+          <span class="acc-price">${fmtPrice(pm==='retail'?860:559)}</span>
         </label>
         <label class="accessory-opt" style="padding:6px 0">
           <input type="checkbox" id="chkFlash" ${window._flashChecked ? 'checked' : ''} onchange="window._flashChecked=this.checked" style="width:16px;height:16px;accent-color:var(--accent)">
           <span style="flex:1;font-weight:600">Flash Trigger (Optical Sync)</span>
-          <span class="acc-price">${currSym}${(pm==='retail'?680:442).toLocaleString()}</span>
+          <span class="acc-price">${fmtPrice(pm==='retail'?680:442)}</span>
         </label>
       </div>
     </div>`;
@@ -825,7 +961,7 @@ function generateResult() {
             <label class="accessory-opt">
               <input type="checkbox" data-price="${a[pm]}" data-name="${a.name}" data-model="${a.model}" onchange="toggleAccessory(this)">
               <span>${t(a.name)}</span>
-              <span class="acc-price">${currSym}${a[pm].toLocaleString()}</span>
+              <span class="acc-price">${fmtPrice(a[pm])}</span>
             </label>
           `).join('')}
         </div>
@@ -842,8 +978,8 @@ function generateResult() {
 
   html += `
     <div class="total-bar ${pm === 'agent' ? 'agent-mode' : 'retail-mode'}">
-      <span class="label">${priceLabel} Total</span>
-      <span class="amount" id="totalAmount">${currSym}${totalVal.toLocaleString()}</span>
+      <span class="label">${priceLabel} Total (${state.currency})</span>
+      <span class="amount" id="totalAmount">${currSym()}${convertPrice(totalVal).toLocaleString()}</span>
     </div>
     <div style="background:#fffbeb;border:2px solid #f59e0b;border-radius:10px;padding:14px 16px;margin-bottom:14px">
       <div style="display:flex;align-items:center;gap:10px">
@@ -881,7 +1017,7 @@ function toggleAccessory(cb) {
   document.querySelectorAll('#accList input:checked').forEach(c => {
     total += parseFloat(c.dataset.price);
   });
-  document.getElementById('totalAmount').textContent = '¥' + total.toLocaleString();
+  document.getElementById('totalAmount').textContent = currSym() + convertPrice(total).toLocaleString();
 }
 
 // === Generate Image for Customer ===
@@ -955,17 +1091,17 @@ function generateImage() {
   }
   totalVal += accTotal;
 
-  function fmtPrice(v) { return v !== null ? '¥' + v.toLocaleString() : 'TBD'; }
+  function fmtP(v) { return v !== null ? currSym() + convertPrice(v).toLocaleString() : 'TBD'; }
   function itemRow(name, model, price, note) {
-    const priceStr = fmtPrice(price);
+    const priceStr = fmtP(price);
     const noteStr = note ? `<div style="font-size:9px;color:#92400e;margin-top:1px">📌 ${t(note)}</div>` : '';
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #eef2f7;font-size:12px">
       <div style="flex:1;min-width:0">
-        <div style="font-weight:600;color:#1a2332">${name}</div>
+        <div style="font-weight:600;color:#1a2332;font-size:12px">${name}</div>
         <div style="font-size:10px;color:#6b7b8d">${model}</div>
         ${noteStr}
       </div>
-      <div style="font-weight:700;color:#0a2647;font-size:13px;flex-shrink:0;margin-left:6px">${priceStr}</div>
+      <div style="font-weight:700;color:#0a2647;font-size:12px;flex-shrink:0;margin-left:6px">${priceStr}</div>
     </div>`;
   }
 
@@ -1036,14 +1172,14 @@ function generateImage() {
   const discountVal = parseFloat(document.getElementById('discountPrice')?.value);
   let totalSection = `<div style="background:linear-gradient(135deg,#0a2647,#144272);padding:16px 18px;display:flex;justify-content:flex-end;align-items:flex-end;gap:20px;color:#fff">`;
   totalSection += `<div style="text-align:right">
-    <div style="font-size:11px;font-weight:600;opacity:0.7">Retail Total</div>
-    <div style="font-size:20px;font-weight:700;opacity:0.85">¥${totalVal.toLocaleString()}</div>
+    <div style="font-size:11px;font-weight:600;opacity:0.7">Retail Total (${state.currency})</div>
+    <div style="font-size:20px;font-weight:700;opacity:0.85">${currSym()}${convertPrice(totalVal).toLocaleString()}</div>
   </div>`;
   if (!isNaN(discountVal) && discountVal > 0) {
     const saved = totalVal - discountVal;
     totalSection += `<div style="text-align:right;border-left:1px solid rgba(255,255,255,0.25);padding-left:20px">
-      <div style="font-size:11px;font-weight:600;opacity:0.8">🎯 Discount <span style="font-size:10px;opacity:0.6">(Save ¥${saved.toLocaleString()})</span></div>
-      <div style="font-size:28px;font-weight:900;color:#fbbf24">¥${discountVal.toLocaleString()}</div>
+      <div style="font-size:11px;font-weight:600;opacity:0.8">🎯 Discount <span style="font-size:10px;opacity:0.6">(Save ${currSym()}${convertPrice(saved).toLocaleString()})</span></div>
+      <div style="font-size:28px;font-weight:900;color:#fbbf24">${currSym()}${convertPrice(discountVal).toLocaleString()}</div>
     </div>`;
   }
   totalSection += `</div>`;
@@ -1065,17 +1201,31 @@ function generateImage() {
     allowTaint: true,
     logging: false
   }).then(canvas => {
-    const link = document.createElement('a');
-    link.download = `Doris_Quote_${camera.name}_${new Date().toISOString().slice(0,10)}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    const imgData = canvas.toDataURL('image/png');
     document.body.removeChild(card);
-    showToast('Quote image generated!');
+    showImageModal(imgData);
   }).catch(err => {
     console.error(err);
     document.body.removeChild(card);
     showToast('Generation failed, please try again.');
   });
+}
+
+function showImageModal(imgSrc) {
+  const old = document.getElementById('imgModal');
+  if (old) old.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'imgModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = `
+    <div style="color:#fff;font-size:16px;font-weight:600;margin-bottom:12px">Quote Image Ready</div>
+    <div style="color:rgba(255,255,255,0.7);font-size:13px;margin-bottom:16px">Long press to save (mobile) · Right-click to save (desktop)</div>
+    <img src="${imgSrc}" style="max-width:100%;max-height:70vh;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,0.3)">
+    <button onclick="document.getElementById('imgModal').remove()" style="margin-top:16px;padding:10px 32px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">Close</button>
+  `;
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
 }
 
 function showToast(msg) {
