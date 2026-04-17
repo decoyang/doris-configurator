@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Doris Smarthousing Configuration Tool</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+:root {
+  --deep: #0a2647;
+  --primary: #144272;
+  --accent: #205295;
+  --light: #e8f0fe;
+  --ice: #f5f8fc;
+  --line: #d1d9e6;
+  --text: #1a2332;
+  --muted: #6b7b8d;
+  --white: #fff;
+  --green: #16a34a;
+  --red: #dc2626;
+  --orange: #ea580c;
+  --gap-bg: #fef2f2;
+  --gap-text: #b91c1c;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background: var(--ice);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--deep) 0%, var(--primary) 100%);
+  color: var(--white);
+  padding: 20px 0;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+.header { display: flex; flex-direction: column; align-items: center; }
+.header .logo-wrap { display: flex; align-items: center; gap: 12px; }
+.header .logo-wrap img { height: 36px; width: auto; }
+.header h1 { font-size: 20px; font-weight: 600; letter-spacing: 1px; }
+.header .subtitle { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+
+/* Steps indicator */
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  transition: all 0.3s;
+}
+.step.active { color: var(--accent); font-weight: 600; }
+.step.done { color: var(--green); }
+.step .num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+  background: var(--ice);
+  border: 2px solid var(--line);
+  transition: all 0.3s;
+}
+.step.active .num { background: var(--accent); color: white; border-color: var(--accent); }
+.step.done .num { background: var(--green); color: white; border-color: var(--green); }
+.step .arrow { color: var(--line); font-size: 10px; }
+
+/* Main container */
+.container { max-width: 720px; margin: 0 auto; padding: 20px 16px 100px; }
+
+/* Section panels */
+.panel {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  display: none;
+}
+.panel.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.panel-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--deep);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--light);
+}
+
+/* Brand selection */
+.brand-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.brand-card {
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--white);
+}
+.brand-card:hover { border-color: var(--accent); background: var(--light); }
+.brand-card.selected { border-color: var(--accent); background: var(--accent); color: white; }
+.brand-card .icon { font-size: 32px; margin-bottom: 8px; }
+.brand-card .icon img { height: 36px; width: auto; max-width: 100%; object-fit: contain; }
+.brand-card .icon-text { font-size: 26px; font-weight: 800; letter-spacing: 1px; font-family: 'Arial Black', Arial, sans-serif; }
+.brand-card .label { font-size: 14px; font-weight: 600; }
+
+/* Camera selection */
+.camera-list { display: flex; flex-direction: column; gap: 8px; }
+.camera-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+.camera-item:hover { background: var(--light); }
+.camera-item.selected { border-color: var(--accent); background: var(--accent); color: white; }
+.camera-item .tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--light);
+  color: var(--accent);
+}
+.camera-item.selected .tag { background: rgba(255,255,255,0.2); color: white; }
+
+/* Lens selection */
+.lens-category {
+  margin-bottom: 16px;
+}
+.lens-category-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 8px;
+  padding-left: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.lens-list { display: flex; flex-direction: column; gap: 6px; }
+.lens-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+.lens-item:hover { background: var(--ice); }
+.lens-item.selected { border-color: var(--green); background: #f0fdf4; }
+.lens-check {
+  width: 20px; height: 20px;
+  border: 2px solid var(--line);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: white;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.lens-item.selected .lens-check { background: var(--green); border-color: var(--green); }
+.lens-status {
+  margin-left: auto;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.status-ok { background: #dcfce7; color: #15803d; }
+.status-warn { background: #fef3c7; color: #92400e; }
+.status-missing { background: var(--gap-bg); color: var(--gap-text); }
+
+/* Result page */
+.result-header {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--deep), var(--primary));
+  border-radius: 12px;
+  color: white;
+  margin-bottom: 20px;
+}
+.result-header h2 { font-size: 18px; margin-bottom: 4px; }
+.result-header .config { font-size: 13px; opacity: 0.8; }
+
+.config-section {
+  background: var(--white);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.config-section-title {
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  background: var(--accent);
+}
+.config-section-body { padding: 0; }
+
+.config-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--ice);
+  font-size: 13px;
+  gap: 8px;
+}
+.config-item:last-child { border-bottom: none; }
+.config-item .ci-left { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.config-item .ci-name { font-weight: 600; }
+.config-item .ci-model { font-size: 11px; color: var(--muted); }
+.config-item .ci-note { font-size: 11px; color: var(--orange); }
+.config-item .ci-right { text-align: right; flex-shrink: 0; }
+.config-item .ci-price { font-weight: 700; color: var(--deep); font-size: 14px; }
+.config-item .ci-price-na { color: var(--muted); font-size: 12px; }
+.config-item.gap-item { background: var(--gap-bg); }
+.config-item.warn-item { background: #fffbeb; }
+
+/* Price mode tabs */
+.price-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.price-tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--ice);
+  color: var(--muted);
+  border: none;
+}
+.price-tab.active-agent {
+  background: var(--accent);
+  color: white;
+}
+.price-tab.active-retail {
+  background: var(--deep);
+  color: white;
+}
+
+/* Total */
+.total-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+.total-bar.agent-mode { background: var(--accent); color: white; }
+.total-bar.retail-mode { background: var(--deep); color: white; }
+.total-bar .label { font-size: 14px; }
+.total-bar .amount { font-size: 24px; font-weight: 800; }
+
+/* Buttons */
+.btn-row { display: flex; gap: 12px; margin-top: 20px; }
+.btn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--deep); }
+.btn-secondary { background: var(--ice); color: var(--accent); }
+.btn-secondary:hover { background: var(--light); }
+.btn-outline { background: white; color: var(--accent); border: 2px solid var(--accent); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-add-accessory {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: 2px dashed var(--line);
+  border-radius: 8px;
+  background: var(--ice);
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+.btn-add-accessory:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Accessory checkboxes */
+.accessory-list {
+  display: none;
+  padding: 12px 16px;
+  background: var(--ice);
+  border-radius: 0 0 8px 8px;
+}
+.accessory-list.show { display: block; }
+.accessory-opt {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0;
+  font-size: 13px;
+  cursor: pointer;
+}
+.accessory-opt input[type="checkbox"] {
+  width: 16px; height: 16px;
+  accent-color: var(--accent);
+}
+.accessory-opt .acc-price { margin-left: auto; color: var(--deep); font-weight: 600; }
+
+/* Extra notes textarea */
+.extra-notes {
+  width: 100%;
+  min-height: 100px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+  resize: vertical;
+  outline: none;
+  line-height: 1.6;
+  background: var(--ice);
+}
+.extra-notes:focus { border-color: var(--accent); }
+.extra-notes::placeholder { color: #b0b8c4; }
+
+/* Image generation button */
+.btn-image { background: linear-gradient(135deg, #16a34a, #15803d); color: white; }
+.btn-image:hover { background: linear-gradient(135deg, #15803d, #166534); }
+
+/* Back button */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  margin-bottom: 12px;
+  border: none;
+  background: none;
+  padding: 4px 0;
+}
+.back-btn:hover { color: var(--accent); }
+
+/* Responsive */
+@media (max-width: 480px) {
+  .container { padding: 12px 12px 100px; }
+  .panel { padding: 16px; }
+  .brand-card { padding: 16px 8px; }
+  .brand-card .icon { font-size: 24px; }
+  .header h1 { font-size: 17px; }
+  .step .txt { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-wrap">
+    <img src="doris_logo.png" alt="Doris">
+    <h1>Doris Smarthousing Configuration Tool</h1>
+  </div>
+  <div class="subtitle">Quick underwater photography kit recommendation for your clients</div>
+</div>
+
+<div class="steps">
+  <div class="step active" id="step1"><span class="num">1</span><span class="txt">Brand</span></div>
+  <span class="arrow">›</span>
+  <div class="step" id="step2"><span class="num">2</span><span class="txt">Camera</span></div>
+  <span class="arrow">›</span>
+  <div class="step" id="step3"><span class="num">3</span><span class="txt">Lens</span></div>
+  <span class="arrow">›</span>
+  <div class="step" id="step4"><span class="num">4</span><span class="txt">Quote</span></div>
+</div>
+
+<div class="container">
+
+  <!-- Step 1: Brand -->
+  <div class="panel active" id="panel1">
+    <div class="panel-title">Select Camera Brand</div>
+    <div class="brand-grid" id="brandGrid"></div>
+  </div>
+
+  <!-- Step 2: Camera -->
+  <div class="panel" id="panel2">
+    <button class="back-btn" onclick="goStep(1)">‹ Back to Brand</button>
+    <div class="panel-title">Select Camera Model</div>
+    <div class="camera-list" id="cameraList"></div>
+  </div>
+
+  <!-- Step 3: Lenses -->
+  <div class="panel" id="panel3">
+    <button class="back-btn" onclick="goStep(2)">‹ Back to Camera</button>
+    <div class="panel-title">Select Lens (Multiple)</div>
+    <div id="lensSelector"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goStep(2)">Previous</button>
+      <button class="btn btn-primary" id="btnGenerate" onclick="goStep(4)" disabled>Generate Quote ›</button>
+    </div>
+  </div>
+
+  <!-- Step 4: Result -->
+  <div class="panel" id="panel4">
+    <button class="back-btn" onclick="goStep(3)">‹ Back to Lenses</button>
+    <div id="resultContent"></div>
+  </div>
+
+</div>
+
+<script>
+let DATA = null;
+let state = { brand: null, camera: null, selectedLenses: [], accessories: {}, priceMode: 'agent' };
+
+async function loadData() {
+  const resp = await fetch('products.json?t=' + Date.now());
+  DATA = await resp.json();
+  renderBrands();
+}
+
+// === Brand ===
+function renderBrands() {
+  const grid = document.getElementById('brandGrid');
+  const brandLogos = {
+    sony: `<div style="background:#000;color:#fff;font-size:14px;font-weight:800;letter-spacing:2px;padding:5px 12px;border-radius:4px">SONY</div>`,
+    canon: `<div style="display:flex;flex-direction:column;align-items:center;gap:2px"><div style="width:42px;height:42px;border-radius:50%;background:#cc0000;display:flex;align-items:center;justify-content:center"><span style="color:#fff;font-size:10px;font-weight:800;letter-spacing:0.5px">Canon</span></div></div>`,
+    nikon: `<div style="display:flex;flex-direction:column;align-items:center;gap:2px"><div style="background:#ffc800;color:#000;font-size:14px;font-weight:900;letter-spacing:2px;padding:4px 10px;border-radius:3px;clip-path:polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%)">NIKON</div></div>`
+  };
+  grid.innerHTML = Object.entries(DATA.brands).map(([key, b]) => `
+    <div class="brand-card" onclick="selectBrand('${key}')">
+      <div class="icon">${brandLogos[key] || brandLogos.sony}</div>
+      <div class="label">${b.name}</div>
+    </div>
+  `).join('');
+}
+
+function selectBrand(key) {
+  state.brand = key;
+  document.querySelectorAll('.brand-card').forEach(c => c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  setTimeout(() => { renderCameras(); goStep(2); }, 200);
+}
+
+// === Camera ===
+function renderCameras() {
+  const list = document.getElementById('cameraList');
+  const cameras = DATA.brands[state.brand].cameras;
+  list.innerHTML = cameras.map((c, i) => `
+    <div class="camera-item" onclick="selectCamera(${i}, this)">
+      <span>${c.name}</span>
+      <span class="tag" id="cableTag${i}">—</span>
+    </div>
+  `).join('');
+  cameras.forEach((c, i) => {
+    const cable = DATA.shutter_cables.find(sc => sc.model === c.cable_key);
+    document.getElementById('cableTag' + i).textContent = cable ? cable.model : '—';
+  });
+}
+
+function selectCamera(idx, el) {
+  state.camera = DATA.brands[state.brand].cameras[idx];
+  document.querySelectorAll('.camera-item').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  setTimeout(() => { renderLenses(); goStep(3); }, 200);
+}
+
+// === Lenses ===
+function renderLenses() {
+  const container = document.getElementById('lensSelector');
+  const brand = DATA.brands[state.brand];
+  const grouped = {};
+  brand.lenses.forEach((l, i) => {
+    const catMap = { '广角': 'Wide Angle', '微距': 'Macro', '鱼眼': 'Fisheye' };
+    const cat = catMap[l.category] || l.category;
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push({ ...l, idx: i });
+  });
+  container.innerHTML = Object.entries(grouped).map(([cat, lenses]) => `
+    <div class="lens-category">
+      <div class="lens-category-title">${cat}</div>
+      <div class="lens-list">
+        ${lenses.map(l => {
+          const hasGap = l.items.some(it => it.status && it.status.includes('❌'));
+          const hasWarn = l.items.some(it => it.status && it.status.includes('❓'));
+          const statusCls = hasGap ? 'status-missing' : hasWarn ? 'status-warn' : 'status-ok';
+          const statusTxt = hasGap ? 'N/A' : hasWarn ? 'TBD' : 'Available';
+          return `
+            <div class="lens-item" data-idx="${l.idx}" onclick="toggleLens(${l.idx}, this)">
+              <div class="lens-check"></div>
+              <div style="flex:1;min-width:0">${l.name}</div>
+              <div class="lens-status ${statusCls}">${statusTxt}</div>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
+  state.selectedLenses = [];
+  updateGenBtn();
+}
+
+function toggleLens(idx, el) {
+  const pos = state.selectedLenses.indexOf(idx);
+  if (pos >= 0) {
+    state.selectedLenses.splice(pos, 1);
+    el.classList.remove('selected');
+  } else {
+    state.selectedLenses.push(idx);
+    el.classList.add('selected');
+  }
+  updateGenBtn();
+}
+
+function updateGenBtn() {
+  document.getElementById('btnGenerate').disabled = state.selectedLenses.length === 0;
+}
+
+// === Result ===
+function generateResult() {
+  const brand = DATA.brands[state.brand];
+  const camera = state.camera;
+  const lenses = state.selectedLenses.map(i => brand.lenses[i]).filter(Boolean);
+  if (!lenses.length) { document.getElementById('resultContent').innerHTML = '<div style="padding:40px;text-align:center;color:#6b7b8d">Please go back and select at least one lens.</div>'; return; }
+  const pm = state.priceMode;
+
+  let totalVal = 0;
+  const housing = DATA.housings[0];
+  totalVal += housing[pm];
+
+  const cable = DATA.shutter_cables.find(sc => sc.model === camera.cable_key);
+  totalVal += cable[pm];
+
+  if (DATA.essentials && DATA.essentials.length) {
+    DATA.essentials.forEach(e => { totalVal += e[pm]; });
+  }
+
+  const partMap = new Map();
+  lenses.forEach(lens => {
+    lens.items.forEach(item => {
+      if (item.model && !partMap.has(item.model)) {
+        partMap.set(item.model, { item, lensName: lens.name });
+      }
+    });
+  });
+
+  const ports = [], rings = [], gears = [], adapters = [];
+  let gapItems = [], warnItems = [];
+
+  lenses.forEach(lens => {
+    lens.items.forEach(item => {
+      if (item.status && item.status.includes('❌')) {
+        gapItems.push({ lens: lens.name, item });
+      } else if (item.status && item.status.includes('❓')) {
+        warnItems.push({ lens: lens.name, item });
+      }
+    });
+  });
+
+  partMap.forEach(({ item }, model) => {
+    const entry = { model, item };
+    if (item.type === 'port') ports.push(entry);
+    else if (item.type === 'ring') rings.push(entry);
+    else if (item.type === 'zoom_gear') gears.push(entry);
+    else if (item.type === 'adapter') adapters.push(entry);
+  });
+
+  function getPrice(dataArr, model) {
+    const d = dataArr.find(x => x.model === model);
+    return d && d[pm] ? d[pm] : null;
+  }
+  ports.forEach(p => { const v = getPrice(DATA.ports, p.model); if (v) totalVal += v; });
+  rings.forEach(r => { const v = getPrice(DATA.rings, r.model); if (v) totalVal += v; });
+  gears.forEach(g => { const v = getPrice(DATA.zoom_gears, g.model); if (v) totalVal += v; });
+  adapters.forEach(a => { const v = getPrice(DATA.adapters, a.model); if (v) totalVal += v; });
+
+  const priceLabel = pm === 'agent' ? 'Agent Price' : 'Retail Price';
+  const currSym = pm === 'agent' ? '¥' : '¥';
+
+  function renderParts(type, parts, dataArr) {
+    return parts.map(p => {
+      const d = dataArr.find(x => x.model === p.model);
+      const price = d && d[pm] ? d[pm] : null;
+      return d ? `
+        <div class="config-item">
+          <div class="ci-left">
+            <span class="ci-name">${d.name}</span>
+            <span class="ci-model">${d.model}</span>
+            ${p.item.note ? `<span class="ci-note">📌 ${p.item.note}</span>` : ''}
+          </div>
+          <div class="ci-right">
+            ${price !== null ? `<span class="ci-price">${currSym}${price.toLocaleString()}</span>` : '<span class="ci-price-na">TBD</span>'}
+          </div>
+        </div>` : '';
+    }).join('');
+  }
+
+  let html = `
+    <div class="result-header">
+      <h2>🐳 Recommended Kit</h2>
+      <div class="config">${brand.name} · ${camera.name} · ${lenses.map(l => l.name).join(' + ')}</div>
+    </div>
+
+    <div class="price-tabs">
+      <button class="price-tab ${pm === 'agent' ? 'active-agent' : ''}" onclick="switchPriceMode('agent')">🔒 Agent Price</button>
+      <button class="price-tab ${pm === 'retail' ? 'active-retail' : ''}" onclick="switchPriceMode('retail')">🏷️ Retail Price</button>
+    </div>
+
+    <div class="config-section">
+      <div class="config-section-title" style="background:#6b7280">👤 Client Info</div>
+      <div class="config-section-body" style="padding:14px 16px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <label style="font-size:13px;font-weight:600;color:#374151;white-space:nowrap">Client Name</label>
+          <input type="text" id="customerName" value="${window._lastCustomerName||''}" placeholder="Enter client name (shown on quote image)" style="flex:1;padding:8px 12px;border:1px solid var(--line);border-radius:6px;font-size:13px;outline:none;font-family:inherit" oninput="window._lastCustomerName=this.value">
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+          <label style="font-size:13px;font-weight:600;color:#374151;white-space:nowrap">🏢 Dealer</label>
+          <input type="text" id="agentName" value="${window._lastAgentName||''}" placeholder="Enter dealer name (shown on quote image)" style="flex:1;padding:8px 12px;border:1px solid var(--line);border-radius:6px;font-size:13px;outline:none;font-family:inherit" oninput="window._lastAgentName=this.value">
+        </div>
+      </div>
+    </div>
+
+    <div class="config-section">
+      <div class="config-section-title">📐 Housing & Cable</div>
+      <div class="config-section-body">
+        <div class="config-item">
+          <div class="ci-left">
+            <span class="ci-name">${housing.name}</span>
+            <span class="ci-model">${housing.model}</span>
+          </div>
+          <div class="ci-right"><span class="ci-price">${currSym}${housing[pm].toLocaleString()}</span></div>
+        </div>
+        <div class="config-item">
+          <div class="ci-left">
+            <span class="ci-name">${cable.name}</span>
+            <span class="ci-model">${cable.model} (${camera.name})</span>
+          </div>
+          <div class="ci-right"><span class="ci-price">${currSym}${cable[pm].toLocaleString()}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="config-section">
+      <div class="config-section-title" style="background:#475569">📎 Standard Accessories</div>
+      <div class="config-section-body">
+        ${DATA.essentials.map(e => `
+          <div class="config-item">
+            <div class="ci-left">
+              <span class="ci-name">${e.name}</span>
+              <span class="ci-model">${e.model}</span>
+            </div>
+            <div class="ci-right"><span class="ci-price">${currSym}${e[pm].toLocaleString()}</span></div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+  if (ports.length) {
+    html += `<div class="config-section"><div class="config-section-title">🔧 Port (${ports.length})</div><div class="config-section-body">${renderParts('port', ports, DATA.ports)}</div></div>`;
+  }
+  if (adapters.length) {
+    html += `<div class="config-section"><div class="config-section-title">🔗 Adapter Ring</div><div class="config-section-body">${renderParts('adapter', adapters, DATA.adapters)}</div></div>`;
+  }
+  if (rings.length) {
+    html += `<div class="config-section"><div class="config-section-title">📏 Extension Ring</div><div class="config-section-body">${renderParts('ring', rings, DATA.rings)}</div></div>`;
+  }
+  if (gears.length) {
+    html += `<div class="config-section"><div class="config-section-title">⚙️ Zoom Gear</div><div class="config-section-body">${renderParts('gear', gears, DATA.zoom_gears)}</div></div>`;
+  }
+
+  if (gapItems.length) {
+    html += `<div class="config-section"><div class="config-section-title" style="background:var(--red)">⚠️ Missing Parts (To Be Developed)</div><div class="config-section-body">
+      ${gapItems.map(g => `
+        <div class="config-item gap-item">
+          <div class="ci-left">
+            <span class="ci-name">${g.lens}</span>
+            <span class="ci-note">${g.item.note || ''} ${g.item.status || ''}</span>
+          </div>
+        </div>`).join('')}
+    </div></div>`;
+  }
+  if (warnItems.length) {
+    html += `<div class="config-section"><div class="config-section-title" style="background:var(--orange)">❓ TBD Parts</div><div class="config-section-body">
+      ${warnItems.map(w => `
+        <div class="config-item warn-item">
+          <div class="ci-left">
+            <span class="ci-name">${w.lens}</span>
+            <span class="ci-note">${w.item.note || ''} ${w.item.status || ''}</span>
+          </div>
+        </div>`).join('')}
+    </div></div>`;
+  }
+
+  html += `
+    <div class="config-section">
+      <div class="config-section-title" style="background:#475569">💡 Configuration Options</div>
+      <div class="config-section-body" style="padding:14px 16px">
+        <label class="accessory-opt" style="padding:6px 0;border-bottom:1px solid var(--ice)">
+          <input type="checkbox" id="chkVacuum" ${window._vacuumChecked ? 'checked' : ''} onchange="window._vacuumChecked=this.checked" style="width:16px;height:16px;accent-color:var(--accent)">
+          <span style="flex:1;font-weight:600">Vacuum Valve System</span>
+          <span class="acc-price">${currSym}${(pm==='retail'?860:559).toLocaleString()}</span>
+        </label>
+        <label class="accessory-opt" style="padding:6px 0">
+          <input type="checkbox" id="chkFlash" ${window._flashChecked ? 'checked' : ''} onchange="window._flashChecked=this.checked" style="width:16px;height:16px;accent-color:var(--accent)">
+          <span style="flex:1;font-weight:600">Flash Trigger (Optical Sync)</span>
+          <span class="acc-price">${currSym}${(pm==='retail'?680:442).toLocaleString()}</span>
+        </label>
+      </div>
+    </div>`;
+
+  html += `
+    <div class="config-section">
+      <div class="config-section-title">📦 Optional Accessories</div>
+      <div class="config-section-body">
+        <div class="btn-add-accessory" onclick="toggleAccessories()">+ Add Optional Accessories</div>
+        <div class="accessory-list" id="accList">
+          ${DATA.accessories.map(a => `
+            <label class="accessory-opt">
+              <input type="checkbox" data-price="${a[pm]}" data-name="${a.name}" data-model="${a.model}" onchange="toggleAccessory(this)">
+              <span>${a.name}</span>
+              <span class="acc-price">${currSym}${a[pm].toLocaleString()}</span>
+            </label>
+          `).join('')}
+        </div>
+      </div>
+    </div>`;
+
+  html += `
+    <div class="config-section">
+      <div class="config-section-title" style="background:#6b7280">📝 Additional Notes</div>
+      <div class="config-section-body" style="padding:16px">
+        <textarea id="extraNotes" class="extra-notes" placeholder="Record client requirements not yet covered by current product line, e.g.:&#10;- Client needs a Port for XX lens (TBD)&#10;- Custom size extension ring required&#10;- Other notes..." oninput="window._extraNotes=this.value">${window._extraNotes||''}</textarea>
+      </div>
+    </div>`;
+
+  html += `
+    <div class="total-bar ${pm === 'agent' ? 'agent-mode' : 'retail-mode'}">
+      <span class="label">${priceLabel} Total</span>
+      <span class="amount" id="totalAmount">${currSym}${totalVal.toLocaleString()}</span>
+    </div>
+    <div style="background:#fffbeb;border:2px solid #f59e0b;border-radius:10px;padding:14px 16px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <label style="font-size:15px;font-weight:700;color:#92400e;white-space:nowrap">🎯 Discount Price</label>
+        <input type="number" id="discountPrice" value="${window._lastDiscountPrice||''}" placeholder="Leave blank for retail price only" style="flex:1;padding:10px 14px;border:1px solid #f59e0b;border-radius:8px;font-size:15px;font-weight:600;outline:none;font-family:inherit;color:#92400e" oninput="window._lastDiscountPrice=this.value" min="0">
+      </div>
+      <div style="font-size:11px;color:#b45309;margin-top:6px">Enter the final negotiated price — will be displayed on the client quote image</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goStep(3)">← Modify</button>
+      <button class="btn btn-primary btn-image" onclick="generateImage()">📸 Generate Quote Image</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goStep(1)">Reset</button>
+    </div>`;
+
+  document.getElementById('resultContent').innerHTML = html;
+  window._baseTotal = totalVal;
+}
+
+function switchPriceMode(mode) {
+  state.priceMode = mode;
+  generateResult();
+}
+
+function toggleAccessories() {
+  document.getElementById('accList').classList.toggle('show');
+}
+
+function toggleAccessory(cb) {
+  let total = window._baseTotal || 0;
+  const pm = state.priceMode;
+  if (window._vacuumChecked) total += (pm === 'retail' ? 860 : 559);
+  if (window._flashChecked) total += (pm === 'retail' ? 680 : 442);
+  document.querySelectorAll('#accList input:checked').forEach(c => {
+    total += parseFloat(c.dataset.price);
+  });
+  document.getElementById('totalAmount').textContent = '¥' + total.toLocaleString();
+}
+
+// === Generate Image for Customer ===
+function generateImage() {
+  const nameEl = document.getElementById('customerName');
+  const name = nameEl ? nameEl.value.trim() : '';
+  window._lastCustomerName = name;
+
+  const agentEl = document.getElementById('agentName');
+  const agent = agentEl ? agentEl.value.trim() : '';
+  window._lastAgentName = agent;
+
+  const brand = DATA.brands[state.brand];
+  const camera = state.camera;
+  const lenses = state.selectedLenses.map(i => brand.lenses[i]);
+  const pm = 'retail';
+  const extraNotes = window._extraNotes || '';
+
+  let totalVal = 0;
+  const housing = DATA.housings[0];
+  totalVal += housing[pm];
+  const cable = DATA.shutter_cables.find(sc => sc.model === camera.cable_key);
+  totalVal += cable[pm];
+
+  if (DATA.essentials && DATA.essentials.length) {
+    DATA.essentials.forEach(e => { totalVal += e[pm]; });
+  }
+
+  const partMap = new Map();
+  lenses.forEach(lens => {
+    lens.items.forEach(item => {
+      if (item.model && !partMap.has(item.model)) {
+        partMap.set(item.model, { item, lensName: lens.name });
+      }
+    });
+  });
+
+  const ports = [], rings = [], gears = [], adapters = [];
+  partMap.forEach(({ item }, model) => {
+    const entry = { model, item };
+    if (item.type === 'port') ports.push(entry);
+    else if (item.type === 'ring') rings.push(entry);
+    else if (item.type === 'zoom_gear') gears.push(entry);
+    else if (item.type === 'adapter') adapters.push(entry);
+  });
+
+  function getPrice(dataArr, model) {
+    const d = dataArr.find(x => x.model === model);
+    return d && d[pm] ? d[pm] : null;
+  }
+  ports.forEach(p => { const v = getPrice(DATA.ports, p.model); if (v) totalVal += v; });
+  rings.forEach(r => { const v = getPrice(DATA.rings, r.model); if (v) totalVal += v; });
+  gears.forEach(g => { const v = getPrice(DATA.zoom_gears, g.model); if (v) totalVal += v; });
+  adapters.forEach(a => { const v = getPrice(DATA.adapters, a.model); if (v) totalVal += v; });
+
+  let accTotal = 0;
+  const accNames = [];
+  document.querySelectorAll('#accList input:checked').forEach(c => {
+    accTotal += parseFloat(c.dataset.price);
+    accNames.push(c.dataset.name);
+  });
+  const needVacuum = window._vacuumChecked;
+  if (needVacuum) {
+    accTotal += 860;
+    accNames.push('抽真空装置');
+  }
+  const needFlash = window._flashChecked;
+  if (needFlash) {
+    accTotal += 680;
+    accNames.push('引闪器（光纤同步器）');
+  }
+  totalVal += accTotal;
+
+  function fmtPrice(v) { return v !== null ? '¥' + v.toLocaleString() : 'TBD'; }
+  function itemRow(name, model, price, note) {
+    const priceStr = fmtPrice(price);
+    const noteStr = note ? `<div style="font-size:9px;color:#92400e;margin-top:1px">📌 ${note}</div>` : '';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #eef2f7;font-size:12px">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;color:#1a2332">${name}</div>
+        <div style="font-size:10px;color:#6b7b8d">${model}</div>
+        ${noteStr}
+      </div>
+      <div style="font-weight:700;color:#0a2647;font-size:13px;flex-shrink:0;margin-left:6px">${priceStr}</div>
+    </div>`;
+  }
+
+  const card = document.createElement('div');
+  card.id = '_imgCard';
+  card.style.cssText = 'position:fixed;left:-9999px;top:0;width:390px;background:#fff;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;z-index:-1';
+
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  let cardHtml = `
+    <div style="background:linear-gradient(135deg,#0a2647,#144272);padding:22px 18px;text-align:center;color:#fff">
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px">
+        <img src="doris_logo.png" crossorigin="anonymous" style="height:36px" onerror="this.style.display='none'">
+        <div style="font-size:18px;font-weight:700">Doris Smarthousing</div>
+      </div>
+      <div style="font-size:12px;opacity:0.85">${brand.name} · ${camera.name} · ${lenses.map(l => l.name).join(' + ')}</div>
+      ${name ? `<div style="font-size:16px;font-weight:700;margin-top:10px;letter-spacing:1px">Client: ${name}</div>` : ''}
+      ${agent ? `<div style="font-size:12px;font-weight:600;margin-top:4px;opacity:0.8">Dealer: ${agent}</div>` : ''}
+      <div style="font-size:11px;opacity:0.6;margin-top:8px">Date: ${dateStr}</div>
+    </div>`;
+
+  cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">📐 Base Kit</div>`;
+  cardHtml += itemRow(housing.name, housing.model, housing[pm]);
+  cardHtml += itemRow(cable.name, cable.model + ' (' + camera.name + ')', cable[pm]);
+  if (DATA.essentials && DATA.essentials.length) {
+    DATA.essentials.forEach(e => {
+      cardHtml += itemRow(e.name, e.model, e[pm]);
+    });
+  }
+
+  if (ports.length) {
+    cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">🔧 Port (${ports.length})</div>`;
+    ports.forEach(p => {
+      const d = DATA.ports.find(x => x.model === p.model);
+      if (d) cardHtml += itemRow(d.name, d.model, getPrice(DATA.ports, p.model), p.item.note);
+    });
+  }
+  if (adapters.length) {
+    cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">🔗 Adapter Ring</div>`;
+    adapters.forEach(a => {
+      const d = DATA.adapters.find(x => x.model === a.model);
+      if (d) cardHtml += itemRow(d.name, d.model, getPrice(DATA.adapters, a.model), a.item.note);
+    });
+  }
+  if (rings.length) {
+    cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">📏 Extension Ring</div>`;
+    rings.forEach(r => {
+      const d = DATA.rings.find(x => x.model === r.model);
+      if (d) cardHtml += itemRow(d.name, d.model, getPrice(DATA.rings, r.model), r.item.note);
+    });
+  }
+  if (gears.length) {
+    cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">⚙️ Zoom Gear</div>`;
+    gears.forEach(g => {
+      const d = DATA.zoom_gears.find(x => x.model === g.model);
+      if (d) cardHtml += itemRow(d.name, d.model, getPrice(DATA.zoom_gears, g.model));
+    });
+  }
+  if (accNames.length) {
+    cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">📦 Accessories</div>`;
+    accNames.forEach(n => {
+      const a = DATA.accessories.find(x => x.name === n);
+      if (a) cardHtml += itemRow(a.name, a.model, a[pm]);
+    });
+  }
+
+  const discountVal = parseFloat(document.getElementById('discountPrice')?.value);
+  let totalSection = `<div style="background:linear-gradient(135deg,#0a2647,#144272);padding:16px 18px;display:flex;justify-content:flex-end;align-items:flex-end;gap:20px;color:#fff">`;
+  totalSection += `<div style="text-align:right">
+    <div style="font-size:11px;font-weight:600;opacity:0.7">Retail Total</div>
+    <div style="font-size:20px;font-weight:700;opacity:0.85">¥${totalVal.toLocaleString()}</div>
+  </div>`;
+  if (!isNaN(discountVal) && discountVal > 0) {
+    const saved = totalVal - discountVal;
+    totalSection += `<div style="text-align:right;border-left:1px solid rgba(255,255,255,0.25);padding-left:20px">
+      <div style="font-size:11px;font-weight:600;opacity:0.8">🎯 Discount <span style="font-size:10px;opacity:0.6">(Save ¥${saved.toLocaleString()})</span></div>
+      <div style="font-size:28px;font-weight:900;color:#fbbf24">¥${discountVal.toLocaleString()}</div>
+    </div>`;
+  }
+  totalSection += `</div>`;
+  cardHtml += totalSection;
+
+  cardHtml += `<div style="padding:12px 18px;text-align:center;font-size:10px;color:#9ca3af;border-top:1px solid #eef2f7;line-height:1.8">
+    Doris Smarthousing · uwsmarthousing.com<br>
+    Date: ${dateStr} · Quote valid for 1 week<br>
+    Prices are for reference only; final price subject to actual order
+  </div>`;
+
+  card.innerHTML = cardHtml;
+  document.body.appendChild(card);
+
+  html2canvas(card, {
+    scale: 2,
+    backgroundColor: '#ffffff',
+    useCORS: true,
+    allowTaint: true,
+    logging: false
+  }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = `Doris_Quote_${camera.name}_${new Date().toISOString().slice(0,10)}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    document.body.removeChild(card);
+    showToast('Quote image generated!');
+  }).catch(err => {
+    console.error(err);
+    document.body.removeChild(card);
+    showToast('Generation failed, please try again.');
+  });
+}
+
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#16a34a;color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15);animation:fadeIn 0.3s';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; }, 2000);
+  setTimeout(() => document.body.removeChild(toast), 2500);
+}
+
+// === Navigation ===
+function goStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('panel' + i).classList.remove('active');
+    const step = document.getElementById('step' + i);
+    step.classList.remove('active', 'done');
+    if (i < n) step.classList.add('done');
+    if (i === n) step.classList.add('active');
+  }
+  if (n === 4) {
+    try { generateResult(); } catch(e) { console.error('generateResult error:', e); document.getElementById('resultContent').innerHTML = '<div style="padding:40px;text-align:center;color:#dc2626;font-size:14px">⚠️ Failed to generate quote. Please refresh and try again.<br><small style="color:#6b7b8d">' + e.message + '</small></div>'; }
+  }
+  document.getElementById('panel' + n).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Init
+loadData();
+</script>
+</body>
+</html>
