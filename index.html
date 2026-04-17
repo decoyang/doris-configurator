@@ -739,12 +739,12 @@ function generateResult() {
       <div class="config-section-title" style="background:#475569">💡 配置确认</div>
       <div class="config-section-body" style="padding:14px 16px">
         <label class="accessory-opt" style="padding:6px 0;border-bottom:1px solid var(--ice)">
-          <input type="checkbox" id="chkVacuum" ${window._vacuumChecked ? 'checked' : ''} onchange="window._vacuumChecked=this.checked" style="width:16px;height:16px;accent-color:var(--accent)">
+          <input type="checkbox" id="chkVacuum" ${window._vacuumChecked ? 'checked' : ''} onchange="window._vacuumChecked=this.checked;toggleAccessory()" style="width:16px;height:16px;accent-color:var(--accent)">
           <span style="flex:1;font-weight:600">需配抽真空装置</span>
           <span class="acc-price">¥${(pm==='retail'?860:559).toLocaleString()}</span>
         </label>
         <label class="accessory-opt" style="padding:6px 0">
-          <input type="checkbox" id="chkFlash" ${window._flashChecked ? 'checked' : ''} onchange="window._flashChecked=this.checked" style="width:16px;height:16px;accent-color:var(--accent)">
+          <input type="checkbox" id="chkFlash" ${window._flashChecked ? 'checked' : ''} onchange="window._flashChecked=this.checked;toggleAccessory()" style="width:16px;height:16px;accent-color:var(--accent)">
           <span style="flex:1;font-weight:600">客户使用闪灯（需配引闪器）</span>
           <span class="acc-price">¥${(pm==='retail'?680:442).toLocaleString()}</span>
         </label>

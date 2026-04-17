@@ -940,12 +940,12 @@ function generateResult() {
       <div class="config-section-title" style="background:#475569">💡 Configuration Options</div>
       <div class="config-section-body" style="padding:14px 16px">
         <label class="accessory-opt" style="padding:6px 0;border-bottom:1px solid var(--ice)">
-          <input type="checkbox" id="chkVacuum" ${window._vacuumChecked ? 'checked' : ''} onchange="window._vacuumChecked=this.checked" style="width:16px;height:16px;accent-color:var(--accent)">
+          <input type="checkbox" id="chkVacuum" ${window._vacuumChecked ? 'checked' : ''} onchange="window._vacuumChecked=this.checked;toggleAccessory()" style="width:16px;height:16px;accent-color:var(--accent)">
           <span style="flex:1;font-weight:600">Vacuum Valve System</span>
           <span class="acc-price">${fmtPrice(pm==='retail'?860:559)}</span>
         </label>
         <label class="accessory-opt" style="padding:6px 0">
-          <input type="checkbox" id="chkFlash" ${window._flashChecked ? 'checked' : ''} onchange="window._flashChecked=this.checked" style="width:16px;height:16px;accent-color:var(--accent)">
+          <input type="checkbox" id="chkFlash" ${window._flashChecked ? 'checked' : ''} onchange="window._flashChecked=this.checked;toggleAccessory()" style="width:16px;height:16px;accent-color:var(--accent)">
           <span style="flex:1;font-weight:600">Flash Trigger (Optical Sync)</span>
           <span class="acc-price">${fmtPrice(pm==='retail'?680:442)}</span>
         </label>
