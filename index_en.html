@@ -446,6 +446,79 @@ body {
 </div>
 
 <script>
+// === Chinese → English name translation map ===
+const NAME_EN = {
+  // Housing
+  'Housing': 'Housing',
+  '电子取景器': 'Electronic Viewfinder',
+  '电池仓': 'Battery Grip',
+  // Ports
+  '140鱼眼Port': '140mm Fisheye Port',
+  '180广角Port': '180mm Wide-Angle Port',
+  // Extension Rings / Macro Rings
+  '50mm镜筒': '50mm Extension Ring',
+  '73mm镜筒': '73mm Extension Ring',
+  '87mm镜筒': '87mm Extension Ring',
+  '95mm微距筒': '95mm Macro Ring',
+  '110mm微距筒': '110mm Macro Ring',
+  '115mm微距筒': '115mm Macro Ring',
+  '129mm微距筒': '129mm Macro Ring',
+  '延伸环25mm': '25mm Extension Ring',
+  // Adapters
+  '转接环18mm': '18mm Adapter Ring',
+  // Zoom Gears
+  '变焦环': 'Zoom Gear',
+  // Cables
+  '快门线': 'Shutter Release Cable',
+  // Essentials
+  '数据线': 'Data Cable',
+  '闪光同步器（底座）': 'Flash Sync Trigger (Base)',
+  // Accessories
+  '抽真空装置': 'Vacuum Valve System',
+  '相机快装板': 'Quick Release Plate',
+  '引闪器（光纤同步器）': 'Optical Flash Trigger',
+  // Brand names
+  'Sony 索尼': 'Sony',
+  'Canon 佳能': 'Canon',
+  'Nikon 尼康': 'Nikon',
+  // Lens notes
+  '87mm镜筒': '87mm Extension Ring',
+  '73mm镜筒': '73mm Extension Ring',
+  '110mm微距筒': '110mm Macro Ring',
+  '115mm微距筒': '115mm Macro Ring',
+  '129mm微距筒': '129mm Macro Ring',
+  '50mm镜筒': '50mm Extension Ring',
+  '95mm微距筒': '95mm Macro Ring',
+  '镜筒待确认': 'Ring TBD',
+  '87mm镜筒(待确认)': '87mm Extension Ring (TBD)',
+  '50mm镜筒(待确认)': '50mm Extension Ring (TBD)',
+  '50mm镜筒(APS-C)': '50mm Extension Ring (APS-C)',
+  // Zoom gear lens names
+  '佳能 EF 8-15mm Fisheye': 'Canon EF 8-15mm Fisheye',
+  '佳能 RF 15-35mm/F2.8': 'Canon RF 15-35mm/F2.8',
+  '尼康 Z 12-24mm/F2.8': 'Nikon Z 12-24mm/F2.8',
+  '尼康 Z 14-30mm/f4': 'Nikon Z 14-30mm/f4',
+  '尼康 AF-S 8-15 Fisheye': 'Nikon AF-S 8-15 Fisheye',
+  '索尼 FE 16-35mm/F2.8一代': 'Sony FE 16-35mm/F2.8 I',
+  '索尼 FE 16-35mm/F2.8二代': 'Sony FE 16-35mm/F2.8 II',
+  '索尼 FE 14-24mm/F2.8': 'Sony FE 14-24mm/F2.8',
+  '索尼 FE 14-24mm/F4': 'Sony FE 14-24mm/F4',
+  // Status notes
+  '⚠️ 可共用12-24环': '⚠️ Can share 12-24 gear',
+};
+
+// Translate Chinese name to English, return original if no match
+function t(name) {
+  if (!name) return name;
+  if (NAME_EN[name]) return NAME_EN[name];
+  // Try partial replacement for notes containing Chinese
+  let result = name;
+  Object.keys(NAME_EN).forEach(cn => {
+    result = result.replace(new RegExp(cn, 'g'), NAME_EN[cn]);
+  });
+  return result;
+}
+
 let DATA = null;
 let state = { brand: null, camera: null, selectedLenses: [], accessories: {}, priceMode: 'agent' };
 
@@ -466,7 +539,7 @@ function renderBrands() {
   grid.innerHTML = Object.entries(DATA.brands).map(([key, b]) => `
     <div class="brand-card" onclick="selectBrand('${key}')">
       <div class="icon">${brandLogos[key] || brandLogos.sony}</div>
-      <div class="label">${b.name}</div>
+      <div class="label">${t(b.name)}</div>
     </div>
   `).join('');
 }
@@ -619,9 +692,9 @@ function generateResult() {
       return d ? `
         <div class="config-item">
           <div class="ci-left">
-            <span class="ci-name">${d.name}</span>
+            <span class="ci-name">${t(d.name)}</span>
             <span class="ci-model">${d.model}</span>
-            ${p.item.note ? `<span class="ci-note">📌 ${p.item.note}</span>` : ''}
+            ${p.item.note ? `<span class="ci-note">📌 ${t(p.item.note)}</span>` : ''}
           </div>
           <div class="ci-right">
             ${price !== null ? `<span class="ci-price">${currSym}${price.toLocaleString()}</span>` : '<span class="ci-price-na">TBD</span>'}
@@ -633,7 +706,7 @@ function generateResult() {
   let html = `
     <div class="result-header">
       <h2>🐳 Recommended Kit</h2>
-      <div class="config">${brand.name} · ${camera.name} · ${lenses.map(l => l.name).join(' + ')}</div>
+      <div class="config">${t(brand.name)} · ${camera.name} · ${lenses.map(l => l.name).join(' + ')}</div>
     </div>
 
     <div class="price-tabs">
@@ -660,14 +733,14 @@ function generateResult() {
       <div class="config-section-body">
         <div class="config-item">
           <div class="ci-left">
-            <span class="ci-name">${housing.name}</span>
+            <span class="ci-name">${t(housing.name)}</span>
             <span class="ci-model">${housing.model}</span>
           </div>
           <div class="ci-right"><span class="ci-price">${currSym}${housing[pm].toLocaleString()}</span></div>
         </div>
         <div class="config-item">
           <div class="ci-left">
-            <span class="ci-name">${cable.name}</span>
+            <span class="ci-name">${t(cable.name)}</span>
             <span class="ci-model">${cable.model} (${camera.name})</span>
           </div>
           <div class="ci-right"><span class="ci-price">${currSym}${cable[pm].toLocaleString()}</span></div>
@@ -681,7 +754,7 @@ function generateResult() {
         ${DATA.essentials.map(e => `
           <div class="config-item">
             <div class="ci-left">
-              <span class="ci-name">${e.name}</span>
+              <span class="ci-name">${t(e.name)}</span>
               <span class="ci-model">${e.model}</span>
             </div>
             <div class="ci-right"><span class="ci-price">${currSym}${e[pm].toLocaleString()}</span></div>
@@ -708,7 +781,7 @@ function generateResult() {
         <div class="config-item gap-item">
           <div class="ci-left">
             <span class="ci-name">${g.lens}</span>
-            <span class="ci-note">${g.item.note || ''} ${g.item.status || ''}</span>
+            <span class="ci-note">${t(g.item.note || '')} ${g.item.status || ''}</span>
           </div>
         </div>`).join('')}
     </div></div>`;
@@ -719,7 +792,7 @@ function generateResult() {
         <div class="config-item warn-item">
           <div class="ci-left">
             <span class="ci-name">${w.lens}</span>
-            <span class="ci-note">${w.item.note || ''} ${w.item.status || ''}</span>
+            <span class="ci-note">${t(w.item.note || '')} ${w.item.status || ''}</span>
           </div>
         </div>`).join('')}
     </div></div>`;
@@ -751,7 +824,7 @@ function generateResult() {
           ${DATA.accessories.map(a => `
             <label class="accessory-opt">
               <input type="checkbox" data-price="${a[pm]}" data-name="${a.name}" data-model="${a.model}" onchange="toggleAccessory(this)">
-              <span>${a.name}</span>
+              <span>${t(a.name)}</span>
               <span class="acc-price">${currSym}${a[pm].toLocaleString()}</span>
             </label>
           `).join('')}
@@ -885,7 +958,7 @@ function generateImage() {
   function fmtPrice(v) { return v !== null ? '¥' + v.toLocaleString() : 'TBD'; }
   function itemRow(name, model, price, note) {
     const priceStr = fmtPrice(price);
-    const noteStr = note ? `<div style="font-size:9px;color:#92400e;margin-top:1px">📌 ${note}</div>` : '';
+    const noteStr = note ? `<div style="font-size:9px;color:#92400e;margin-top:1px">📌 ${t(note)}</div>` : '';
     return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #eef2f7;font-size:12px">
       <div style="flex:1;min-width:0">
         <div style="font-weight:600;color:#1a2332">${name}</div>
@@ -909,18 +982,18 @@ function generateImage() {
         <img src="doris_logo.png" crossorigin="anonymous" style="height:36px" onerror="this.style.display='none'">
         <div style="font-size:18px;font-weight:700">Doris Smarthousing</div>
       </div>
-      <div style="font-size:12px;opacity:0.85">${brand.name} · ${camera.name} · ${lenses.map(l => l.name).join(' + ')}</div>
+      <div style="font-size:12px;opacity:0.85">${t(brand.name)} · ${camera.name} · ${lenses.map(l => l.name).join(' + ')}</div>
       ${name ? `<div style="font-size:16px;font-weight:700;margin-top:10px;letter-spacing:1px">Client: ${name}</div>` : ''}
       ${agent ? `<div style="font-size:12px;font-weight:600;margin-top:4px;opacity:0.8">Dealer: ${agent}</div>` : ''}
       <div style="font-size:11px;opacity:0.6;margin-top:8px">Date: ${dateStr}</div>
     </div>`;
 
   cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">📐 Base Kit</div>`;
-  cardHtml += itemRow(housing.name, housing.model, housing[pm]);
-  cardHtml += itemRow(cable.name, cable.model + ' (' + camera.name + ')', cable[pm]);
+  cardHtml += itemRow(t(housing.name), housing.model, housing[pm]);
+  cardHtml += itemRow(t(cable.name), cable.model + ' (' + camera.name + ')', cable[pm]);
   if (DATA.essentials && DATA.essentials.length) {
     DATA.essentials.forEach(e => {
-      cardHtml += itemRow(e.name, e.model, e[pm]);
+      cardHtml += itemRow(t(e.name), e.model, e[pm]);
     });
   }
 
@@ -928,35 +1001,35 @@ function generateImage() {
     cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">🔧 Port (${ports.length})</div>`;
     ports.forEach(p => {
       const d = DATA.ports.find(x => x.model === p.model);
-      if (d) cardHtml += itemRow(d.name, d.model, getPrice(DATA.ports, p.model), p.item.note);
+      if (d) cardHtml += itemRow(t(d.name), d.model, getPrice(DATA.ports, p.model), p.item.note);
     });
   }
   if (adapters.length) {
     cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">🔗 Adapter Ring</div>`;
     adapters.forEach(a => {
       const d = DATA.adapters.find(x => x.model === a.model);
-      if (d) cardHtml += itemRow(d.name, d.model, getPrice(DATA.adapters, a.model), a.item.note);
+      if (d) cardHtml += itemRow(t(d.name), d.model, getPrice(DATA.adapters, a.model), a.item.note);
     });
   }
   if (rings.length) {
     cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">📏 Extension Ring</div>`;
     rings.forEach(r => {
       const d = DATA.rings.find(x => x.model === r.model);
-      if (d) cardHtml += itemRow(d.name, d.model, getPrice(DATA.rings, r.model), r.item.note);
+      if (d) cardHtml += itemRow(t(d.name), d.model, getPrice(DATA.rings, r.model), r.item.note);
     });
   }
   if (gears.length) {
     cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">⚙️ Zoom Gear</div>`;
     gears.forEach(g => {
       const d = DATA.zoom_gears.find(x => x.model === g.model);
-      if (d) cardHtml += itemRow(d.name, d.model, getPrice(DATA.zoom_gears, g.model));
+      if (d) cardHtml += itemRow(t(d.name), d.model, getPrice(DATA.zoom_gears, g.model));
     });
   }
   if (accNames.length) {
     cardHtml += `<div style="background:#f0f4fa;padding:7px 14px;font-size:11px;font-weight:700;color:#144272;border-bottom:1px solid #d1d9e6">📦 Accessories</div>`;
     accNames.forEach(n => {
       const a = DATA.accessories.find(x => x.name === n);
-      if (a) cardHtml += itemRow(a.name, a.model, a[pm]);
+      if (a) cardHtml += itemRow(t(a.name), a.model, a[pm]);
     });
   }
 
